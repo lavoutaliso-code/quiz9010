@@ -96,20 +96,36 @@ const Rastro = {
 
     this.descarrega();
 
-    /* espelho no Pixel da Meta — só quando existe um ID configurado */
+    /* ── espelho no Pixel da Meta ──
+       Só os marcos. `entrou_tela` e `respondeu` ficam de fora de propósito:
+       são 40+ por pessoa e entupiriam o pixel sem servir de semente. */
     if (window.fbq) {
-      const mapa = {
+      const padrao = {
         quiz_inicio: 'ViewContent',
         calculou: 'AddToCart',
-        escolheu_caminho: 'InitiateCheckout',
         clicou_play: 'Lead',
         quiz_fim: 'CompleteRegistration'
       };
-      if (mapa[evento]) fbq('track', mapa[evento], {
-        content_name: 'quiz9010:' + evento,
-        value: dados?.faturamento || 0, currency: 'BRL'
-      });
-      fbq('trackCustom', 'q9010_' + evento, dados || {});
+      // "quero faturar mais" é intenção; "estou satisfeita" não é — não vira evento de compra
+      if (evento === 'escolheu_caminho' && dados.caminho === 'crescer')
+        padrao.escolheu_caminho = 'InitiateCheckout';
+
+      const comum = {
+        content_name: 'quiz9010',
+        content_category: evento,
+        value: Number(r.faturamento) || 0,
+        currency: 'BRL'
+      };
+      if (padrao[evento]) fbq('track', padrao[evento], comum, { eventID: Q.sessao + ':' + evento });
+
+      // um evento próprio por marco, para montar público por nome
+      const meus = ['quiz_inicio','calculou','escolheu_caminho','conhece_9010','clicou_play','quiz_fim'];
+      if (meus.includes(evento)) fbq('trackCustom', 'q9010_' + evento, {
+        ...comum,
+        servico: r.servico || '', faturamento: Number(r.faturamento) || 0,
+        dobro: Number(r.dobro) || 0, caminho: r.caminho || '',
+        final: r.final || '', ate_onde: corpo.tela
+      }, { eventID: Q.sessao + ':' + evento });
     }
   },
 
