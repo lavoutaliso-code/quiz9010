@@ -1,7 +1,7 @@
 {
-  "tool_name": "mcp__plugin_chrome-devtools-mcp_chrome-devtools__emulate",
-  "tool_input_preview": "{\"pageId\":24,\"device\":\"iPhone 15\"}",
-  "error": "Input validation error: Invalid arguments for tool emulate: Unrecognized key: \"device\"",
-  "timestamp": "2026-10-21T21:08:59.669Z",
+  "tool_name": "mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_snapshot",
+  "tool_input_preview": "{\"pageId\":25,\"viewportOnly\":\"true\"}",
+  "error": "Input validation error: Invalid arguments for tool take_snapshot: Unrecognized key: \"viewportOnly\"",
+  "timestamp": "2026-10-21T21:57:40.193Z",
   "retry_count": 1
 }
