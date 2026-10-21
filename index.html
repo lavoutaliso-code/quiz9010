@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<meta name="theme-color" content="#E9E9E9">
+<title>Quiz do tráfego pago: é pra mim?</title>
+<meta name="description" content="Descubra em 2 minutos quanto o seu negócio já fatura e quanto ele poderia faturar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+body{font-family:Inter,-apple-system,system-ui,sans-serif;background:#E9E9E9;color:#242424;
+  touch-action:manipulation;user-select:none}
+
+/* ░░ palco: uma tela por vez ░░ */
+#app{position:fixed;inset:0;overflow:hidden}
+.tela{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;text-align:center;
+  padding:calc(env(safe-area-inset-top) + 22px) 26px calc(env(safe-area-inset-bottom) + 18px);
+  background:#E9E9E9;overflow:hidden;overscroll-behavior:none;touch-action:none}
+.tela.ativa{display:flex;animation:entraTela .34s cubic-bezier(.19,1,.22,1) both}
+@keyframes entraTela{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;width:100%;flex:0 0 auto;gap:12px}
+.voltar{width:38px;height:38px;border-radius:12px;background:#FEFEFE;border:0;display:grid;place-items:center;
+  box-shadow:0 1px 2px rgba(0,0,0,.05);cursor:pointer;flex:0 0 38px}
+.prog{display:flex;align-items:center;gap:8px;flex:1;font-family:"JetBrains Mono",monospace;
+  font-size:10.5px;letter-spacing:.12em;color:#9B9B9B}
+.prog u{text-decoration:none;flex:1;height:2px;background:#D6D6D4;border-radius:2px;position:relative;display:block}
+.prog u s{position:absolute;left:0;top:0;bottom:0;background:#242424;border-radius:2px;display:block;
+  transition:width .45s cubic-bezier(.19,1,.22,1)}
+.vazio38{width:38px;flex:0 0 38px}
+
+h2{font-size:23px;font-weight:700;letter-spacing:-.04em;line-height:1.2;flex:0 0 auto}
+.lead{font-size:12.5px;color:#8E8E8E;margin-top:7px;flex:0 0 auto;line-height:1.5}
+.sp{flex:1}
+.btn{width:100%;background:#242424;color:#fff;border:0;border-radius:100px;padding:17px;
+  font-family:Inter;font-size:14.5px;font-weight:600;letter-spacing:-.01em;cursor:pointer;flex:0 0 auto;
+  transition:.2s}
+.btn.off{background:#DCDCDA;color:#A8A8A6;pointer-events:none}
+.verde{background:#2E9E6B;box-shadow:0 10px 22px -12px rgba(46,158,107,.8)}
+.faixalbl{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:#AFAFAF;margin-top:10px;flex:0 0 auto}
+.faixa{display:flex;gap:4px;width:100%;margin-top:9px;flex:0 0 auto}
+.faixa button{flex:1;background:#FEFEFE;border:0;border-radius:11px;padding:11px 0;font-family:Inter;
+  font-size:15px;font-weight:600;color:#242424;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.05);
+  transition:transform .08s}
+.faixa button:active{transform:scale(.92)}
+.faixa button.del{flex:0 0 44px;background:transparent;box-shadow:none;color:#9B9B9B;font-size:13px}
+
+/* ══ T1 · capa ══ */
+#t1{background:#F4F5F7;padding-top:calc(env(safe-area-inset-top) + 34px)}
+#t1 .kicker{font-size:10.5px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:#9DA3AA}
+#t1 .sp-a{flex:.8}
+#t1 .stage{display:grid;place-items:center;width:100%;position:relative;height:302px;flex:0 0 auto}
+#t1 .halo{position:absolute;width:320px;height:320px;border-radius:50%;
+  background:radial-gradient(circle,rgba(96,131,255,.26),rgba(96,131,255,0) 66%);animation:resp 5.6s ease-in-out infinite}
+@keyframes resp{0%,100%{transform:scale(1);opacity:.32}50%{transform:scale(1.08);opacity:.6}}
+#t1 .blob{width:238px;height:238px;border-radius:72px;position:relative;animation:flutua 7s ease-in-out infinite;
+  background:radial-gradient(circle at 30% 24%,rgba(255,255,255,.95) 0%,rgba(255,255,255,0) 44%),
+    linear-gradient(150deg,#8FA8FF 0%,#5A78F0 46%,#3B50C4 100%);
+  box-shadow:0 44px 70px -32px rgba(59,80,196,.75),inset 0 3px 8px rgba(255,255,255,.55);
+  display:grid;place-items:center}
+@keyframes flutua{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+#t1 .blob .q{font-size:122px;font-weight:800;color:#fff;letter-spacing:-.06em;text-shadow:0 5px 18px rgba(30,45,120,.38)}
+#t1 .ttl{font-size:31px;font-weight:700;letter-spacing:-.04em;line-height:1.14;margin-top:14px;max-width:300px}
+#t1 .ttl span{display:block;color:#71777E;font-weight:500;font-size:14.5px;margin-top:10px;letter-spacing:-.01em}
+#t1 .btn{background:#141719;border-radius:18px;font-size:15px;display:flex;align-items:center;
+  justify-content:center;gap:9px;padding:22px}
+#t1 .foot{font-size:11.5px;color:#9DA3AA;margin-top:14px;flex:0 0 auto}
+
+/* ══ T2 · anel + cards ══ */
+.anel{position:relative;margin-top:12px;display:grid;place-items:center;flex:0 0 auto}
+.anel .mid{position:absolute;text-align:center}
+.anel .mid .q{font-size:25px;line-height:1;font-weight:800;letter-spacing:-.04em;color:#242424}
+.anel .mid .st{font-size:9.5px;font-weight:700;color:#8E8E8E;letter-spacing:.09em;margin-top:3px}
+.av{width:40px;height:40px;border-radius:50%;background:linear-gradient(140deg,#FFD9A8,#F0A864);
+  position:relative;flex:0 0 40px}
+.av:after{content:"";position:absolute;inset:-3px;border-radius:50%;border:2.5px solid #AFD5FA}
+.lista{display:grid;gap:9px;width:100%;margin-top:16px;flex:0 0 auto}
+.card{background:#FEFEFE;border-radius:18px;padding:11px 14px;display:flex;align-items:center;gap:13px;
+  box-shadow:0 1px 2px rgba(0,0,0,.055);cursor:pointer;border:2px solid #FEFEFE;transition:.18s;text-align:left}
+.card .ic{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:17px;flex:0 0 40px;
+  position:relative;background:#fff}
+.card .ic:before{content:"";position:absolute;inset:-3px;border-radius:50%;border:2.5px solid var(--ring)}
+.card .tt{flex:1;min-width:0}
+.card .tt b{display:block;font-size:14px;font-weight:600;letter-spacing:-.015em;color:#2E2E2E}
+.card .ck{width:22px;height:22px;border-radius:50%;border:2px solid #DCDCDC;flex:0 0 22px}
+.card.on{border-color:#242424}
+.card.on .ck{border-color:#242424;background:#242424;display:grid;place-items:center}
+.card.on .ck:after{content:"";width:9px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;
+  transform:rotate(-45deg) translate(1px,-1px)}
+
+/* ══ T3 · notinha ══ */
+.cupom{width:100%;margin-top:11px;background:#FDFCF7;position:relative;flex:0 0 auto;padding:15px 18px 16px;
+  text-align:left;box-shadow:0 2px 5px rgba(60,55,40,.1),0 12px 26px -16px rgba(60,55,40,.35)}
+.cupom:before,.cupom:after{content:"";position:absolute;left:0;right:0;height:11px;pointer-events:none}
+.cupom:before{top:0;background:radial-gradient(circle at 9px 0,#E9E9E9 9px,rgba(233,233,233,0) 9.6px) 0 0/18px 11px repeat-x}
+.cupom:after{bottom:0;background:radial-gradient(circle at 9px 11px,#E9E9E9 9px,rgba(233,233,233,0) 9.6px) 0 0/18px 11px repeat-x}
+.cupom .topo{text-align:center;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.16em;
+  text-transform:uppercase;color:#A39780}
+.cupom .topo b{display:block;font-family:Inter;font-size:13px;font-weight:700;letter-spacing:-.01em;
+  color:#2E2A22;text-transform:none;margin-top:5px}
+.cupom .corte{height:1px;margin:8px 0;background:repeating-linear-gradient(90deg,#CFC8B6 0 5px,transparent 5px 10px)}
+.cupom .campo{text-align:center;padding:2px 0 0}
+.cupom .campo .rot{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:#A39780}
+.cupom .campo .nm{display:flex;align-items:baseline;justify-content:center;gap:5px;margin-top:6px}
+.cupom .campo .nm s{text-decoration:none;font-size:19px;color:#A39780;font-weight:600}
+.cupom .campo .nm b{font-size:38px;font-weight:800;letter-spacing:-.05em;line-height:1;color:#2E2A22;
+  font-variant-numeric:tabular-nums}
+.cupom .campo .nm i{font-style:normal;display:inline-block;width:3px;height:30px;background:#2E2A22;
+  animation:pisca 1.1s steps(1) infinite;align-self:center}
+@keyframes pisca{0%,48%{opacity:1}52%,96%{opacity:0}100%{opacity:1}}
+.cupom .campo .dica{font-size:11px;color:#9B9280;margin-top:7px}
+.cupom .ln{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:4px 0;
+  font-family:"JetBrains Mono",monospace;font-size:11px}
+.cupom .ln span{color:#8C8470}
+.cupom .ln b{color:#2E2A22;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cupom .ln.novo b{color:#1A6B3F}
+.cupom .ln.wait span,.cupom .ln.wait b{color:#BDB5A2}
+.cupom .ln.wait b{font-weight:400;font-style:italic}
+.cupom .tot{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:4px;
+  font-family:"JetBrains Mono",monospace}
+.cupom .tot span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8C8470}
+.cupom .tot b{font-size:20px;font-weight:700;color:#C9C0AC;letter-spacing:-.02em}
+.cupom .rodape{text-align:center;font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.09em;
+  color:#BDB5A2;margin-top:7px}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;width:100%;flex:0 0 auto}
+.key{background:#FEFEFE;border-radius:13px;padding:10px 0;font-size:18px;font-weight:600;
+  box-shadow:0 1px 2px rgba(0,0,0,.05);cursor:pointer;border:0;font-family:Inter;color:#242424;
+  transition:transform .08s}
+.key:active{transform:scale(.95)}
+.key.alt{background:transparent;box-shadow:none;color:#8E8E8E;font-size:13px;font-weight:500}
+
+/* ══ T4 · termômetro ══ */
+#t4 .palco{flex:1;display:flex;align-items:center;justify-content:center;gap:20px;width:100%;min-height:0}
+.tubowrap{position:relative;flex:0 0 92px}
+.tubo{width:92px;height:276px;border-radius:46px;background:#FEFEFE;position:relative;overflow:hidden;
+  cursor:grab;box-shadow:inset 0 2px 6px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05)}
+.tubo .liq{position:absolute;left:0;right:0;bottom:0;border-radius:0 0 46px 46px;min-height:18px;
+  background:linear-gradient(180deg,#8FC4F5,#5A9FE8);transition:height .06s linear}
+.tubo .liq:after{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:rgba(255,255,255,.6)}
+.tubo .marcas{position:absolute;inset:0;pointer-events:none}
+.tubo .marcas i{position:absolute;left:14px;right:14px;height:1px;background:rgba(0,0,0,.07);display:block}
+.dicaSeta{position:absolute;left:50%;margin-left:-15px;width:30px;pointer-events:none;z-index:5;
+  transition:opacity .3s}
+.dicaSeta.off{opacity:0}
+.dicaSeta svg{animation:sobeSeta 1.9s cubic-bezier(.4,0,.3,1) infinite}
+@keyframes sobeSeta{0%{transform:translateY(16px);opacity:0}22%{opacity:1}70%{transform:translateY(-16px);opacity:1}100%{transform:translateY(-26px);opacity:0}}
+.pulso{position:absolute;left:-14px;right:-14px;height:46px;border-radius:50%;pointer-events:none;z-index:4;
+  background:radial-gradient(ellipse at center,rgba(90,159,232,.35),rgba(90,159,232,0) 70%);
+  animation:pulsa 1.9s ease-in-out infinite;transition:opacity .3s}
+.pulso.off{opacity:0}
+@keyframes pulsa{0%,100%{transform:scale(.8);opacity:.5}50%{transform:scale(1.15);opacity:.95}}
+#t4 .info{text-align:left}
+#t4 .info .n{font-size:62px;font-weight:800;letter-spacing:-.055em;line-height:1;font-variant-numeric:tabular-nums}
+#t4 .info .u{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9B9B9B;margin-top:7px}
+#t4 .info .hint{font-size:11.5px;color:#AFAFAF;margin-top:14px;line-height:1.45}
+
+/* ══ T5 · rosca ══ */
+#t5 .palco{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
+.rosca{position:relative;cursor:grab}
+.rosca .mid{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.rosca .mid .n{font-size:58px;font-weight:800;letter-spacing:-.055em;line-height:1;
+  font-variant-numeric:tabular-nums;transition:color .25s}
+.rosca .mid .u{font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:#9B9B9B;margin-top:5px}
+.rosca .mid .tagr{margin-top:9px;font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  border-radius:100px;padding:4px 10px;transition:.25s}
+#setaRosca{transform-origin:126px 126px;animation:giraSeta 2.2s cubic-bezier(.45,0,.3,1) infinite;transition:opacity .3s}
+#setaRosca.off{opacity:0}
+@keyframes giraSeta{0%{transform:rotate(-26deg);opacity:0}18%{opacity:1}72%{transform:rotate(34deg);opacity:1}100%{transform:rotate(52deg);opacity:0}}
+
+/* ══ T6 · resultado + caminhos ══ */
+#t6 .rot{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:#9B9B9B;margin-top:48px;flex:0 0 auto}
+#t6 .big{display:flex;align-items:baseline;justify-content:center;gap:7px;margin-top:10px;flex:0 0 auto}
+#t6 .big s{text-decoration:none;font-size:25px;font-weight:600;color:#9B9B9B}
+#t6 .big b{font-size:52px;font-weight:800;letter-spacing:-.05em;line-height:1;font-variant-numeric:tabular-nums}
+#t6 .mes{font-size:12.5px;color:#9B9B9B;margin-top:7px;flex:0 0 auto}
+.verconta{background:none;border:0;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:#B5B5B3;margin-top:13px;cursor:pointer;flex:0 0 auto;padding:4px 8px;
+  text-decoration:underline;text-underline-offset:3px;text-decoration-color:#DCDCDA}
+.contaBox{font-family:"JetBrains Mono",monospace;font-size:11px;color:#8C8C8A;margin-top:9px;flex:0 0 auto;
+  max-height:0;opacity:0;overflow:hidden;transition:max-height .35s cubic-bezier(.19,1,.22,1),opacity .3s}
+.contaBox.on{max-height:30px;opacity:1}
+.contaBox b{color:#242424;font-weight:700}
+.divisa{width:46px;height:1px;background:#D2D2D0;margin:26px auto 0;flex:0 0 auto}
+#t6 .perg{font-size:17px;font-weight:700;letter-spacing:-.03em;line-height:1.38;margin-top:18px;flex:0 0 auto}
+#t6 .sinc{font-size:12.5px;color:#8E8E8E;margin-top:8px;flex:0 0 auto}
+.duas{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:22px;flex:0 0 auto}
+.op{background:#FEFEFE;border:2px solid #FEFEFE;border-radius:20px;padding:20px 12px 17px;cursor:pointer;
+  box-shadow:0 1px 2px rgba(0,0,0,.055);transition:.16s}
+.op .ic{width:50px;height:50px;border-radius:50%;margin:0 auto 12px;display:grid;place-items:center;transition:.16s}
+.op b{font-size:14.5px;font-weight:700;letter-spacing:-.02em;display:block;line-height:1.25}
+.op.mais .ic{background:#E7F5EE}
+.op.nao .ic{background:#FBEAEA}
+.op.mais.on{border-color:#2E9E6B;background:#F4FBF7}
+.op.mais.on .ic{background:#2E9E6B}
+.op.mais.on .ic svg path{stroke:#fff}
+.op.nao.on{border-color:#D14343;background:#FDF5F5}
+.op.nao.on .ic{background:#D14343}
+.op.nao.on .ic svg path{stroke:#fff}
+
+/* ══ T7 · parabéns ══ */
+.coroa{position:relative;width:98px;height:98px;flex:0 0 auto;margin-top:6px}
+.medalha{position:relative;z-index:2;width:98px;height:98px;border-radius:50%;overflow:hidden;
+  background:radial-gradient(circle at 36% 30%,#FFFFFF,#F3F3F1);
+  box-shadow:0 1px 2px rgba(0,0,0,.06),0 14px 28px -16px rgba(0,0,0,.4),inset 0 0 0 1px rgba(0,0,0,.04);
+  display:grid;place-items:center;animation:brota .7s cubic-bezier(.3,1.5,.5,1) both}
+@keyframes brota{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+.medalha .tick{position:relative;z-index:3}
+.medalha .tick path{stroke-dasharray:46;stroke-dashoffset:46;animation:risca .5s .55s cubic-bezier(.22,1,.36,1) forwards}
+@keyframes risca{to{stroke-dashoffset:0}}
+.confete{position:absolute;top:-66px;left:-60px;right:-60px;bottom:-6px;pointer-events:none;z-index:1}
+.confete i{position:absolute;display:block;border-radius:1.5px;
+  animation:caiConf var(--d) cubic-bezier(.25,.8,.35,1) var(--atraso) forwards}
+@keyframes caiConf{0%{opacity:0;transform:translateY(-110px) rotate(0) scale(.5)}18%{opacity:1}
+  100%{opacity:1;transform:translateY(0) rotate(var(--giro)) scale(1)}}
+#t7 .par{font-size:29px;font-weight:800;letter-spacing:-.042em;line-height:1.08;flex:0 0 auto;margin-top:11px}
+#t7 .dec{font-size:14px;font-weight:600;color:#5E5E5C;margin-top:5px;flex:0 0 auto;letter-spacing:-.02em}
+#t7 .existe{font-size:23px;font-weight:800;letter-spacing:-.04em;flex:0 0 auto;margin-top:16px}
+.trilho{position:relative;width:100%;height:222px;margin-top:8px;flex:0 0 auto}
+.trilho svg.linha{position:absolute;inset:0;width:100%;height:100%}
+.fio{stroke:#2E9E6B;stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:420;stroke-dashoffset:420}
+.fio.anda{animation:puxaFio 1.7s .6s cubic-bezier(.4,.08,.3,1) forwards}
+@keyframes puxaFio{to{stroke-dashoffset:0}}
+.degrau{position:absolute;width:9px;height:9px;border-radius:50%;background:#E9E9E9;
+  box-shadow:0 0 0 2.6px #2E9E6B;opacity:0}
+.degrau.on{animation:surge .3s ease-out forwards}
+@keyframes surge{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:scale(1)}}
+.pilula{position:absolute;border-radius:15px;padding:10px 13px;text-align:left;
+  box-shadow:0 10px 22px -14px rgba(0,0,0,.5);opacity:0}
+.pilula.v{opacity:1;animation:entraPil .5s cubic-bezier(.22,1,.36,1) both}
+@keyframes entraPil{from{opacity:0;transform:translateY(12px) scale(.95)}to{opacity:1;transform:none}}
+.pilula .rot{font-family:"JetBrains Mono",monospace;font-size:8px;letter-spacing:.15em;text-transform:uppercase;opacity:.82}
+.pilula .v{font-size:20px;font-weight:800;letter-spacing:-.05em;margin-top:3px;line-height:1;
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.pilula .v s{text-decoration:none;font-size:11.5px;opacity:.75;font-weight:600;margin-right:2px}
+.pilula.hoje{top:0;left:0;background:#FEFEFE;color:#5E5E5C}
+.pilula.cabe{bottom:0;right:0;background:linear-gradient(140deg,#3FBF84,#1C7A4F);color:#fff;padding:13px 15px}
+.pilula.cabe .v{margin-top:0}
+.marca{position:absolute;display:flex;align-items:center;gap:5px;opacity:0}
+.marca.v{opacity:1;animation:entraPil .5s both}
+.marca span{font-size:12px;font-weight:700;letter-spacing:-.01em;white-space:nowrap}
+.marca.sai{left:150px;top:14px}
+.marca.sai span{color:#8E8E8C}
+.marca.pra{right:150px;bottom:14px}
+.marca.pra span{color:#2E9E6B}
+#t7 .quer{font-size:21px;font-weight:800;letter-spacing:-.04em;line-height:1.22;max-width:300px;
+  margin-top:12px;flex:0 0 auto}
+.acoes{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;flex:0 0 auto;margin-top:22px}
+.bsim,.bnao{border:0;border-radius:18px;padding:17px 10px 15px;cursor:pointer;font-family:Inter;
+  display:flex;flex-direction:column;align-items:center;gap:8px;transition:transform .1s}
+.bsim:active,.bnao:active{transform:scale(.97)}
+.bsim .ic,.bnao .ic{width:36px;height:36px;border-radius:50%;display:grid;place-items:center}
+.bsim b,.bnao b{font-size:14.5px;font-weight:700;letter-spacing:-.02em;line-height:1.2}
+.bsim{background:#2E9E6B;color:#fff;box-shadow:0 10px 22px -12px rgba(46,158,107,.8)}
+.bsim .ic{background:rgba(255,255,255,.22)}
+.bnao{background:#FEFEFE;color:#5E5E5C;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.bnao .ic{background:#FBEAEA}
+
+/* ══ T8 · 90/10 ══ */
+#t8 .chamada{font-size:17px;font-weight:600;color:#6E6E6C;letter-spacing:-.025em;line-height:1.4;margin-top:24px;flex:0 0 auto}
+#t8 .chamada b{color:#2E2E2C;font-weight:700}
+.alvo{position:relative;display:inline-block;padding:8px 24px;margin-top:6px;flex:0 0 auto}
+.alvo .num{font-size:76px;font-weight:900;letter-spacing:-.05em;line-height:1;color:#1A1A1A;position:relative;z-index:2}
+.alvo .num.v{animation:nasceNum .55s cubic-bezier(.3,1.5,.5,1) both}
+@keyframes nasceNum{from{opacity:0;transform:scale(.72)}to{opacity:1;transform:none}}
+.alvo .giz{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;
+  overflow:visible;z-index:1;width:268px;height:126px}
+.alvo .giz path{fill:none;stroke:#FFE878;stroke-linecap:round;stroke-linejoin:round;stroke-width:7;
+  filter:url(#aspero);opacity:.95;stroke-dasharray:560;stroke-dashoffset:560}
+.alvo .giz path.v{animation:riscoGiz 1.2s cubic-bezier(.35,.1,.25,1) forwards}
+@keyframes riscoGiz{to{stroke-dashoffset:0}}
+.mas{position:relative;display:inline-block;font-size:17px;font-weight:700;letter-spacing:-.025em;
+  margin-top:16px;opacity:0;flex:0 0 auto}
+.mas.v{animation:apareceMas .4s forwards}
+@keyframes apareceMas{to{opacity:1}}
+.mas .texto{position:relative;z-index:2}
+.mas .grifo{position:absolute;left:-5px;right:-5px;bottom:1px;height:56%;background:#FFE878;border-radius:3px;
+  transform-origin:left;transform:scaleX(0);z-index:1}
+.mas .grifo.v{animation:varreGrifo .75s cubic-bezier(.3,.6,.3,1) forwards}
+@keyframes varreGrifo{to{transform:scaleX(1)}}
+.esteira{width:100%;overflow:hidden;flex:0 0 auto;margin-top:22px;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.corre{display:flex;gap:11px;width:max-content;padding:3px 0;animation:andaEst 42s linear infinite}
+@keyframes andaEst{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.zap{width:236px;flex:0 0 236px;border-radius:15px;overflow:hidden;background:#EFE7DE;
+  box-shadow:0 2px 4px rgba(0,0,0,.08),0 12px 24px -16px rgba(0,0,0,.45)}
+.zap .top{background:#F7F7F7;border-bottom:1px solid #D9D9D9;display:flex;align-items:center;gap:6px;padding:5px 8px}
+.zap .top .volta{color:#007AFF;font-size:11px;line-height:1;font-weight:600}
+.zap .top .avz{width:20px;height:20px;border-radius:50%;flex:0 0 20px}
+.zap .top .quem{text-align:left;line-height:1.1;flex:1;min-width:0}
+.zap .top .quem b{display:block;font-size:9.5px;font-weight:600;letter-spacing:-.02em;color:#000}
+.zap .top .quem s{display:block;text-decoration:none;font-size:7px;color:#8E8E93}
+.zap .chat{padding:7px 6px 8px;display:flex;flex-direction:column;gap:4px;background:#EFE7DE;position:relative}
+.zap .chat:before{content:"";position:absolute;inset:0;opacity:.45;pointer-events:none;
+  background-image:radial-gradient(circle at 14% 16%,#DCD1C3 1.1px,transparent 1.2px),
+                   radial-gradient(circle at 64% 48%,#DCD1C3 1.1px,transparent 1.2px);
+  background-size:40px 40px}
+.bolha{max-width:88%;border-radius:8px;padding:6px 8px 5px;position:relative;z-index:2;text-align:left;
+  font-size:10.5px;line-height:1.38;color:#111}
+.bolha .hr{display:flex;align-items:center;justify-content:flex-end;gap:3px;margin-top:1px}
+.bolha .hr span{font-size:6.5px;color:#8E8E93}
+.bolha.dela{align-self:flex-start;background:#FFF;border-bottom-left-radius:3px}
+.bolha.minha{align-self:flex-end;background:#D9FDD3;border-bottom-right-radius:3px}
+mark{background:linear-gradient(180deg,rgba(255,232,120,0) 46%,#FFE878 46%);padding:0 1px;font-weight:600}
+mark.forte{background:#FFE878;padding:1px 3px;border-radius:3px;font-weight:700}
+#t8 .cap{font-size:12px;color:#A8A8A6;margin-top:14px;flex:0 0 auto}
+
+/* ══ T9 · play ══ */
+#t9 .gratis{display:flex;align-items:center;gap:11px;width:100%;color:#2E9E6B;font-size:13px;font-weight:800;
+  letter-spacing:.14em;flex:0 0 auto;justify-content:center;margin-top:20px}
+#t9 .gratis s{flex:1;max-width:58px;height:1.5px;background:#BFE3D2;text-decoration:none;display:block;border-radius:2px}
+#t9 h2{margin-top:16px;font-size:27px;font-weight:800}
+#t9 .naocobro{font-size:17px;font-weight:800;letter-spacing:-.03em;color:#2E9E6B;margin-top:13px;flex:0 0 auto}
+#t9 .passos{width:100%;margin-top:30px;flex:0 0 auto}
+#t9 .passo{display:flex;align-items:flex-start;gap:16px;text-align:left;padding:41px 0;border-bottom:1px solid #DCDCDA}
+#t9 .passo:last-child{border-bottom:0}
+#t9 .passo .n{width:34px;height:34px;border-radius:50%;background:#242424;color:#fff;flex:0 0 34px;
+  display:grid;place-items:center;font-size:14px;font-weight:800}
+#t9 .passo .tx b{font-size:16px;font-weight:700;letter-spacing:-.02em;display:block}
+#t9 .passo .tx s{text-decoration:none;font-size:13px;color:#8E8E8C;display:block;margin-top:4px;line-height:1.45}
+#t9 .passo.alerta .n{background:#D14343}
+#t9 .passo.alerta .tx b{color:#D14343}
+#t9 .pronta{font-size:21px;font-weight:800;letter-spacing:-.035em;margin-top:34px;flex:0 0 auto}
+#t9 .btn{margin-top:20px;display:flex;align-items:center;justify-content:center;gap:9px;padding:19px;font-size:16px;font-weight:700}
+#t9 .play{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center}
+#t9 .depois{font-size:12px;color:#9B9B99;margin-top:14px;flex:0 0 auto}
+
+/* ══ T10 · vídeo ══ */
+#t10{background:#0A0B0A;color:#F2F2F0;justify-content:center}
+#t10 .player{width:100%;aspect-ratio:16/9;border-radius:18px;background:#000;display:grid;place-items:center;
+  position:relative;overflow:hidden;flex:0 0 auto}
+#t10 .player .barra{position:absolute;left:0;right:0;bottom:0;height:4px;background:rgba(255,255,255,.18)}
+#t10 .player .barra i{display:block;height:100%;width:0;background:#2E9E6B;transition:width .3s linear}
+#t10 .tit{font-size:20px;font-weight:800;letter-spacing:-.03em;margin-top:22px}
+#t10 .sub{font-size:13px;color:#8E928C;margin-top:9px;line-height:1.5}
+#t10 .btn{margin-top:26px;background:#2E9E6B}
+
+/* ══ T11 · fim ══ */
+#t11 .tick2{width:92px;height:92px;border-radius:50%;background:#E7F5EE;display:grid;place-items:center;flex:0 0 auto}
+#t11 h2{margin-top:20px;font-size:26px;font-weight:800}
+#t11 .lead{font-size:14px;margin-top:12px;max-width:300px}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="aspero" x="-25%" y="-25%" width="150%" height="150%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.055 0.085" numOctaves="3" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="5.5" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</defs></svg>
+
+<div id="app">
+
+  <!-- ══════ 1 · capa ══════ -->
+  <section class="tela ativa" id="t1">
+    <div class="kicker">Quiz · 6 perguntas · 2 min</div>
+    <div class="sp-a"></div>
+    <div class="stage"><div class="halo"></div><div class="blob"><div class="q">?</div></div></div>
+    <div class="ttl">Tráfego pago<br>é pra mim?<span>Responda seis perguntas e veja o seu número.</span></div>
+    <div class="sp"></div>
+    <button class="btn" id="b-comecar">Começar o quiz <span style="font-size:17px;line-height:1">→</span></button>
+    <div class="foot">Sem cadastro</div>
+  </section>
+
+  <!-- ══════ 2 · serviço ══════ -->
+  <section class="tela" id="t2">
+    <div class="topbar">
+      <button class="voltar" data-voltar><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#242424" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="av"></div>
+    </div>
+    <div class="anel">
+      <svg width="186" height="186" viewBox="0 0 186 186">
+        <g transform="rotate(-90 93 93)" fill="none" stroke-width="9" stroke-linecap="round">
+          <circle cx="93" cy="93" r="78" stroke="#DCDCDC" stroke-dasharray="70 11.68"/>
+          <circle cx="93" cy="93" r="78" stroke="#AFD5FA" stroke-dasharray="70 420.1" id="anel2"/>
+        </g>
+      </svg>
+      <div class="mid"><div class="q">?</div><div class="st">1 DE 6</div></div>
+    </div>
+    <h2>O que você vende?</h2>
+    <div class="lead">Toque no que mais entra no seu caixa.</div>
+    <div class="lista" id="servicos"></div>
+    <div class="sp"></div>
+    <button class="btn verde off" id="b-t2">Continuar</button>
+  </section>
+
+  <!-- ══════ 3 · ticket ══════ -->
+  <section class="tela" id="t3">
+    <div class="topbar">
+      <button class="voltar" data-voltar><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#242424" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="av"></div>
+    </div>
+    <div class="anel">
+      <svg width="84" height="84" viewBox="0 0 186 186">
+        <g transform="rotate(-90 93 93)" fill="none" stroke-width="9" stroke-linecap="round">
+          <circle cx="93" cy="93" r="78" stroke="#DCDCDC" stroke-dasharray="70 11.68"/>
+          <circle cx="93" cy="93" r="78" stroke="#AFD5FA" stroke-dasharray="152 338"/>
+        </g>
+      </svg>
+      <div class="mid"><div class="q" style="font-size:22px">?</div><div class="st">2 DE 6</div></div>
+    </div>
+    <h2 style="margin-top:9px;font-size:21px">Quanto você cobra<br>por atendimento?</h2>
+    <div class="cupom">
+      <div class="topo">o seu atendimento<b id="cupom-servico">—</b></div>
+      <div class="corte"></div>
+      <div class="campo">
+        <div class="rot">Em média, quanto você cobra</div>
+        <div class="nm"><s>R$</s><b id="v-ticket">0</b><i></i></div>
+        <div class="dica">O valor normal, não o da promoção.</div>
+      </div>
+      <div class="corte"></div>
+      <div class="ln"><span>Em média, por atendimento</span><b id="l-ticket">R$ 0</b></div>
+      <div class="ln wait"><span>× clientes por dia</span><b>pergunta 3</b></div>
+      <div class="ln wait"><span>× dias que você atende</span><b>pergunta 4</b></div>
+      <div class="corte"></div>
+      <div class="tot"><span>O que entra por mês</span><b>R$ ——</b></div>
+      <div class="rodape">· falta responder 2 perguntas ·</div>
+    </div>
+    <div class="pad" id="pad-ticket">
+      <button class="key">1</button><button class="key">2</button><button class="key">3</button>
+      <button class="key">4</button><button class="key">5</button><button class="key">6</button>
+      <button class="key">7</button><button class="key">8</button><button class="key">9</button>
+      <button class="key alt" data-k="c">limpar</button><button class="key">0</button><button class="key alt" data-k="b">⌫</button>
+    </div>
+    <div class="sp"></div>
+    <button class="btn verde off" id="b-t3">Continuar</button>
+  </section>
+
+  <!-- ══════ 4 · clientes/dia ══════ -->
+  <section class="tela" id="t4">
+    <div class="topbar">
+      <button class="voltar" data-voltar><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#242424" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="prog"><span>03</span><u><s style="width:50%"></s></u><span>06</span></div>
+      <div class="vazio38"></div>
+    </div>
+    <h2 style="margin-top:20px">Quantas clientes<br>você atende por dia?</h2>
+    <div class="palco">
+      <div class="tubowrap">
+        <div class="tubo" id="tubo"><div class="liq" id="liq" style="height:30%"></div><div class="marcas" id="marcas"></div></div>
+        <div class="pulso" id="pulso"></div>
+        <div class="dicaSeta" id="dicaSeta">
+          <svg width="30" height="46" viewBox="0 0 30 46" fill="none">
+            <path d="M15 42V8" stroke="#2F6FC4" stroke-width="3.4" stroke-linecap="round"/>
+            <path d="M6.5 16.5 15 7l8.5 9.5" stroke="#2F6FC4" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="info"><div class="n" id="v-dia">6</div><div class="u">por dia</div>
+        <div class="hint">Num dia normal,<br>não no melhor dia.</div></div>
+    </div>
+    <div class="faixalbl">ou toque o número</div>
+    <div class="faixa" id="faixa-dia">
+      <button>1</button><button>2</button><button>3</button><button>4</button><button>5</button>
+      <button>6</button><button>7</button><button>8</button><button>9</button><button>0</button>
+      <button class="del" data-k="b">⌫</button>
+    </div>
+    <button class="btn verde" id="b-t4" style="margin-top:12px">Continuar</button>
+  </section>
+
+  <!-- ══════ 5 · dias/mês ══════ -->
+  <section class="tela" id="t5">
+    <div class="topbar">
+      <button class="voltar" data-voltar><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#242424" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="prog"><span>04</span><u><s style="width:66.6%"></s></u><span>06</span></div>
+      <div class="vazio38"></div>
+    </div>
+    <h2 style="margin-top:18px">Quantos dias você<br>atende por mês?</h2>
+    <div class="palco">
+      <div class="rosca" id="rosca">
+        <svg width="252" height="252" viewBox="0 0 252 252" id="svgRosca">
+          <g id="gomos"></g>
+          <g id="setaRosca">
+            <path d="M126 8 A 118 118 0 0 1 185 24" fill="none" stroke="#2E9E6B" stroke-width="4" stroke-linecap="round"/>
+            <path d="M176 13 L188 25 L175 34" fill="none" stroke="#2E9E6B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+        </svg>
+        <div class="mid"><div><div class="n" id="v-dias">22</div><div class="u">dias no mês</div>
+          <div class="tagr" id="tag-dias">ritmo normal</div></div></div>
+      </div>
+    </div>
+    <div class="faixalbl">ou toque o número</div>
+    <div class="faixa" id="faixa-dias">
+      <button>1</button><button>2</button><button>3</button><button>4</button><button>5</button>
+      <button>6</button><button>7</button><button>8</button><button>9</button><button>0</button>
+      <button class="del" data-k="b">⌫</button>
+    </div>
+    <button class="btn verde off" id="b-t5" style="margin-top:12px">Continuar</button>
+  </section>
+
+  <!-- ══════ 6 · resultado ══════ -->
+  <section class="tela" id="t6">
+    <div class="topbar">
+      <button class="voltar" data-voltar><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#242424" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="prog"><span>05</span><u><s style="width:83.3%"></s></u><span>06</span></div>
+      <div class="vazio38"></div>
+    </div>
+    <div class="rot">Em média, o seu negócio faz</div>
+    <div class="big"><s>R$</s><b id="v-mes">0</b></div>
+    <div class="mes">por mês</div>
+    <button class="verconta" id="b-verconta">como cheguei nesse número</button>
+    <div class="contaBox" id="contaBox">R$ <b id="c-ticket">0</b> × <b id="c-dia">0</b> por dia × <b id="c-dias">0</b> dias</div>
+    <div class="divisa"></div>
+    <div class="perg">Agora que você sabe quanto fatura,<br>existem dois caminhos.</div>
+    <div class="sinc">Escolha um com sinceridade.</div>
+    <div class="duas" id="caminhos">
+      <div class="op mais" data-c="crescer">
+        <div class="ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M5 13l4.5 4.5L19 7" stroke="#2E9E6B" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <b>Quero<br>faturar mais</b>
+      </div>
+      <div class="op nao" data-c="satisfeita">
+        <div class="ic"><svg width="21" height="21" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#D14343" stroke-width="2.8" stroke-linecap="round"/></svg></div>
+        <b>Estou<br>satisfeita</b>
+      </div>
+    </div>
+    <button class="btn off" id="b-t6">Continuar</button>
+    <div class="sp"></div>
+  </section>
+
+  <!-- ══════ 7 · parabéns ══════ -->
+  <section class="tela" id="t7">
+    <div class="coroa">
+      <div class="confete" id="confete"></div>
+      <div class="medalha"><div class="tick"><svg width="40" height="40" viewBox="0 0 52 52" fill="none">
+        <path d="M14 27.5 L22.5 36 L38 17" stroke="#2E9E6B" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg></div></div>
+    </div>
+    <div class="par">Parabéns!</div>
+    <div class="dec">pela decisão</div>
+    <div class="existe">Existe um caminho</div>
+    <div class="trilho">
+      <svg class="linha" viewBox="0 0 338 222" preserveAspectRatio="none">
+        <path class="fio" id="fio7" d="M52 58 L52 96 L142 96 L142 144 L240 144 L240 184"/>
+      </svg>
+      <div class="pilula hoje" id="pil-hoje"><div class="rot">hoje</div><div class="v"><s>R$</s><span id="p-hoje">0</span></div></div>
+      <div class="pilula cabe" id="pil-cabe"><div class="v"><s>R$</s><span id="p-cabe">0</span></div></div>
+      <div class="degrau" id="d1" style="left:38.5%;top:40%"></div>
+      <div class="degrau" id="d2" style="left:69%;top:62%"></div>
+      <div class="marca sai" id="m-sai">
+        <svg width="26" height="18" viewBox="0 0 26 18" fill="none">
+          <path d="M23 13 C 16 14, 9 12, 4 7" stroke="#8E8E8C" stroke-width="2" stroke-linecap="round"/>
+          <path d="M10 6 L3.5 6 L4.5 12.5" stroke="#8E8E8C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg><span>sai disso</span>
+      </div>
+      <div class="marca pra" id="m-pra">
+        <span>pra isso</span>
+        <svg width="26" height="18" viewBox="0 0 26 18" fill="none">
+          <path d="M3 5 C 10 4, 17 6, 22 11" stroke="#2E9E6B" stroke-width="2" stroke-linecap="round"/>
+          <path d="M16 12 L22.5 12 L21.5 5.5" stroke="#2E9E6B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+    <div class="quer">Você quer saber<br>qual caminho é esse?</div>
+    <div class="acoes">
+      <button class="bsim" id="b-t7-sim">
+        <span class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M5 13l4.5 4.5L19 7" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <b>Quero saber</b>
+      </button>
+      <button class="bnao" id="b-t7-nao">
+        <span class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#D14343" stroke-width="2.8" stroke-linecap="round"/></svg></span>
+        <b>Deixa pra lá</b>
+      </button>
+    </div>
+    <div class="sp"></div>
+  </section>
+
+  <!-- ══════ 8 · 90/10 ══════ -->
+  <section class="tela" id="t8">
+    <div class="chamada">As <b>grandes empresas</b> fazem<br>uma coisa chamada</div>
+    <div class="alvo">
+      <div class="num" id="num8">90/10</div>
+      <svg class="giz" viewBox="0 0 268 126" fill="none">
+        <path id="giz8" d="M48 26 C 16 33, 5 66, 32 92 C 62 120, 206 122, 242 92 C 272 66, 256 30, 210 21 C 160 11, 72 14, 52 24"/>
+      </svg>
+    </div>
+    <div class="mas" id="mas8"><span class="grifo" id="grifo8"></span><span class="texto">mas ninguém te conta isso</span></div>
+    <div class="esteira"><div class="corre" id="corre8"></div></div>
+    <div class="cap">elas descobriram. ninguém conta o que é.</div>
+    <div class="sp"></div>
+    <div class="acoes" id="acoes8">
+      <button class="bsim" id="b-t8-sim">
+        <span class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M5 13l4.5 4.5L19 7" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <b>Me conta!!</b>
+      </button>
+      <button class="bnao" id="b-t8-nao" style="background:#D14343;color:#fff">
+        <span class="ic" style="background:rgba(255,255,255,.22)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/></svg></span>
+        <b>Já conheço</b>
+      </button>
+    </div>
+  </section>
+
+  <!-- ══════ 9 · play ══════ -->
+  <section class="tela" id="t9">
+    <div class="gratis"><s></s>100% GRATUITO<s></s></div>
+    <h2>Eu vou te explicar<br>o que é o 90/10.</h2>
+    <div class="naocobro">Não vou te cobrar nada.</div>
+    <div class="passos">
+      <div class="passo"><span class="n">1</span><div class="tx"><b>Senta num lugar calmo</b><s>o vídeo é curto, mas pede atenção inteira</s></div></div>
+      <div class="passo"><span class="n">2</span><div class="tx"><b>Pega papel e caneta</b><s>você vai querer anotar os números</s></div></div>
+      <div class="passo alerta"><span class="n">3</span><div class="tx"><b>Assista até o fim</b><s>ele roda uma vez só e sai do ar depois</s></div></div>
+    </div>
+    <div class="pronta">Posso dar o play?</div>
+    <button class="btn verde" id="b-t9">
+      <span class="play"><svg width="11" height="12" viewBox="0 0 34 38"><path d="M4 3l27 16-27 16z" fill="#fff"/></svg></span>
+      Sim, estou pronta
+    </button>
+    <div class="depois">7 minutos · sem cartão · sem cadastro</div>
+  </section>
+
+  <!-- ══════ 10 · vídeo ══════ -->
+  <section class="tela" id="t10">
+    <div class="player">
+      <div style="text-align:center;color:#6E726C">
+        <div style="font-size:13px;font-weight:600">o vídeo entra aqui</div>
+        <div style="font-size:11px;margin-top:5px">espaço reservado · 7:12</div>
+      </div>
+      <div class="barra"><i id="barraVid"></i></div>
+    </div>
+    <div class="tit">A estratégia 90/10</div>
+    <div class="sub">Assista até o fim. Ele sai do ar<br>assim que terminar.</div>
+    <button class="btn" id="b-t10">Terminei de assistir</button>
+  </section>
+
+  <!-- ══════ 11 · fim ══════ -->
+  <section class="tela" id="t11">
+    <div class="sp"></div>
+    <div class="tick2"><svg width="42" height="42" viewBox="0 0 52 52" fill="none">
+      <path d="M14 27.5 L22.5 36 L38 17" stroke="#2E9E6B" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <h2 id="fim-ttl">Obrigada!</h2>
+    <div class="lead" id="fim-txt">Foi bom ter você aqui.</div>
+    <div class="sp"></div>
+  </section>
+
+</div>
+
+<!-- ░░ PIXEL DA META ░░
+     Troque o 0 abaixo pelo ID do pixel (Gerenciador de Eventos → Fontes de dados).
+     Enquanto for 0, nada é enviado para a Meta e o resto do quiz segue igual.
+     O rastro da casa (Firebase) funciona com ou sem pixel. -->
+<script>
+window.PIXEL_ID = '0';
+(function () {
+  if (!window.PIXEL_ID || window.PIXEL_ID === '0') return;
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+  (window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', window.PIXEL_ID);
+  fbq('track', 'PageView');
+})();
+</script>
+<script src="quiz.js"></script>
+</body>
+</html>

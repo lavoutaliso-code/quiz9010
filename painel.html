@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quiz 90/10 — quem respondeu</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,Inter,system-ui,sans-serif;background:#E9E9E9;color:#242424;padding:18px}
+.caixa{max-width:1100px;margin:0 auto}
+h1{font-size:20px;font-weight:800;letter-spacing:-.4px}
+.sub{font-size:12px;color:#8A8A86;margin-top:3px}
+.porta{background:#fff;border-radius:16px;padding:20px;max-width:340px;margin:60px auto;
+  box-shadow:0 2px 14px rgba(0,0,0,.06)}
+input,button{font:inherit}
+input{width:100%;padding:11px 13px;border:1px solid #DCDCDA;border-radius:10px;margin-top:10px;font-size:16px}
+button{padding:11px 15px;border:0;border-radius:10px;background:#242424;color:#fff;font-weight:700;
+  margin-top:10px;cursor:pointer}
+button.claro{background:#fff;color:#242424;border:1px solid #DCDCDA}
+.erro{color:#C0392B;font-size:13px;margin-top:8px}
+.cartoes{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:9px;margin:16px 0}
+.c{background:#fff;border-radius:13px;padding:13px}
+.c b{display:block;font-size:26px;font-weight:800;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+.c span{font-size:11px;color:#8A8A86;text-transform:uppercase;letter-spacing:.5px}
+.c i{display:block;font-size:11px;color:#8A8A86;font-style:normal;margin-top:2px}
+.tab{background:#fff;border-radius:14px;overflow:auto;max-height:62vh}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid #F0F0EE;white-space:nowrap}
+th{position:sticky;top:0;background:#fff;font-size:11px;color:#8A8A86;text-transform:uppercase;
+  letter-spacing:.4px;z-index:1}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+.pil{display:inline-block;padding:2px 7px;border-radius:7px;font-size:11px;font-weight:700}
+.ok{background:#E4F3EB;color:#1E6B47}.no{background:#FBE7E4;color:#9E2B1C}.meio{background:#FDF3DC;color:#8A6410}
+.linha{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.nota{font-size:12px;color:#8A8A86;margin-top:12px;line-height:1.55}
+details{margin-top:4px}summary{cursor:pointer;font-size:11px;color:#8A8A86}
+</style>
+</head>
+<body>
+<div class="caixa">
+
+<div id="porta" class="porta">
+  <h1>Quem respondeu o quiz</h1>
+  <div class="sub">Painel privado.</div>
+  <input id="s" type="password" placeholder="senha" autocomplete="current-password">
+  <button id="entrar" style="width:100%">Entrar</button>
+  <div id="erro" class="erro" style="display:none">senha errada</div>
+</div>
+
+<div id="corpo" style="display:none">
+  <div class="linha">
+    <div style="flex:1">
+      <h1>Quem respondeu o quiz</h1>
+      <div class="sub" id="quando">—</div>
+    </div>
+    <button class="claro" id="recarregar">Atualizar</button>
+    <button class="claro" id="csv">Baixar CSV</button>
+  </div>
+
+  <div class="cartoes" id="cartoes"></div>
+  <div class="tab"><table id="t"></table></div>
+
+  <div class="nota">
+    <b>De onde vem cada número:</b> todos são <i>contagem</i> de sessões gravadas na base —
+    uma linha por aparelho que abriu o quiz. Não é estimativa.<br>
+    <b>O faturamento é o que ELA digitou</b> (em média × clientes/dia × dias/mês). É a conta que
+    apareceu na tela dela, não uma projeção minha.<br>
+    <b>Para o público semelhante:</b> o pixel da Meta é o que monta o público. Enquanto
+    <code>PIXEL_ID</code> estiver em <code>0</code> no <code>index.html</code>, esta lista existe
+    aqui mas <b>não</b> chega na Meta.
+  </div>
+</div>
+</div>
+
+<script>
+const BASE = 'https://paineldolavou-default-rtdb.firebaseio.com/quiz9010';
+const SENHA = 'segredo9010';
+let dados = [];
+
+const $ = i => document.getElementById(i);
+const fmt = n => n == null ? '' : Math.round(n).toLocaleString('pt-BR');
+const hora = s => { if (!s) return ''; const d = new Date(s);
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) + ' ' +
+         d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); };
+
+$('entrar').onclick = () => {
+  if ($('s').value !== SENHA) { $('erro').style.display = 'block'; return; }
+  sessionStorage.setItem('q9010', '1');
+  abre();
+};
+$('s').onkeydown = e => { if (e.key === 'Enter') $('entrar').click(); };
+if (sessionStorage.getItem('q9010') === '1') abre();
+
+function abre() { $('porta').style.display = 'none'; $('corpo').style.display = 'block'; carrega(); }
+$('recarregar').onclick = carrega;
+
+async function carrega() {
+  $('quando').textContent = 'lendo…';
+  const r = await fetch(BASE + '/sessao.json');
+  const o = (await r.json()) || {};
+  dados = Object.entries(o).map(([id, s]) => ({ ...s, sessao: s.sessao || id }))
+    .sort((a, b) => String(b.primeiro || '').localeCompare(String(a.primeiro || '')));
+  pinta();
+  $('quando').textContent = 'lido agora · ' + dados.length + ' sessões na base';
+}
+
+function pinta() {
+  const n = f => dados.filter(f).length;
+  const cartoes = [
+    ['abriram',      dados.length,                               'sessões'],
+    ['calcularam',   n(s => s.faturamento != null),              'viram o próprio número'],
+    ['quer crescer', n(s => s.caminho === 'crescer'),            'escolheu faturar mais'],
+    ['satisfeita',   n(s => s.caminho === 'satisfeita'),         'disse que está bem'],
+    ['deu play',     n(s => s.clicou_play),                      'assistiu a aula'],
+    ['terminaram',   n(s => s.terminou),                         'chegaram ao fim']
+  ];
+  const comF = dados.filter(s => s.faturamento > 0);
+  const soma = comF.reduce((a, s) => a + s.faturamento, 0);
+  cartoes.push(['média declarada', comF.length ? 'R$ ' + fmt(soma / comF.length) : '—',
+                'de ' + comF.length + ' que calcularam']);
+
+  $('cartoes').innerHTML = cartoes.map(([r, v, i]) =>
+    `<div class="c"><b>${typeof v === 'number' ? fmt(v) : v}</b><span>${r}</span><i>${i}</i></div>`).join('');
+
+  const pil = (v, t) => v ? `<span class="pil ok">${t}</span>` : '<span class="pil no">não</span>';
+  $('t').innerHTML =
+    `<tr><th>quando</th><th>serviço</th><th class="n">em média</th><th class="n">cli/dia</th>
+      <th class="n">dias</th><th class="n">fatura</th><th class="n">dobro</th><th>caminho</th>
+      <th>90/10</th><th>play</th><th>fim</th><th class="n">seg</th><th>origem</th><th>parou em</th></tr>` +
+    dados.map(s => `<tr>
+      <td>${hora(s.primeiro)}</td>
+      <td>${s.servico || ''}</td>
+      <td class="n">${s.ticket ? 'R$ ' + fmt(s.ticket) : ''}</td>
+      <td class="n">${s.clientes_dia ?? ''}</td>
+      <td class="n">${s.dias_mes ?? ''}</td>
+      <td class="n">${s.faturamento ? 'R$ ' + fmt(s.faturamento) : ''}</td>
+      <td class="n">${s.dobro ? 'R$ ' + fmt(s.dobro) : ''}</td>
+      <td>${s.caminho === 'crescer' ? '<span class="pil ok">crescer</span>'
+            : s.caminho === 'satisfeita' ? '<span class="pil meio">satisfeita</span>' : ''}</td>
+      <td>${s.conhece_9010 === 'me_conta' ? '<span class="pil ok">me conta</span>'
+            : s.conhece_9010 === 'ja_conheco' ? '<span class="pil meio">já conhece</span>' : ''}</td>
+      <td>${pil(s.clicou_play, 'sim')}</td>
+      <td>${s.final ? '<span class="pil ok">' + s.final + '</span>' : '<span class="pil no">parou</span>'}</td>
+      <td class="n">${s.segundos ?? ''}</td>
+      <td>${(s.utm && (s.utm.utm_source || s.utm.src)) || (s.ref ? new URL(s.ref).hostname : 'direto')}
+        ${s.utm && s.utm.fbclid ? ' <span class="pil ok">fb</span>' : ''}</td>
+      <td>${s.ate_onde || ''}<details><summary>${Object.keys(s.eventos || {}).length} eventos</summary>
+        ${Object.values(s.eventos || {}).sort((a, b) => (a.s || 0) - (b.s || 0))
+          .map(e => `${e.s}s ${e.e}`).join('<br>')}</details></td>
+    </tr>`).join('');
+}
+
+$('csv').onclick = () => {
+  const cab = ['sessao','primeiro','ultimo','servico','ticket','clientes_dia','dias_mes',
+    'faturamento','dobro','caminho','conhece_9010','clicou_play','terminou','final','segundos',
+    'ate_onde','utm_source','utm_campaign','utm_content','fbclid','referrer','aparelho'];
+  const esc = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+  const linhas = dados.map(s => cab.map(c => {
+    if (c === 'referrer') return esc(s.ref);
+    if (c === 'aparelho') return esc(s.ua);
+    if (c.startsWith('utm_') || c === 'fbclid') return esc(s.utm?.[c]);
+    return esc(s[c]);
+  }).join(','));
+  const url = URL.createObjectURL(new Blob(['﻿' + [cab.join(',')].concat(linhas).join('\n')],
+    { type: 'text/csv;charset=utf-8' }));
+  const a = document.createElement('a');
+  a.href = url; a.download = 'quiz9010.csv'; a.click();
+  URL.revokeObjectURL(url);
+};
+
+window.__painel = { d: () => dados, carrega };
+</script>
+</body>
+</html>
