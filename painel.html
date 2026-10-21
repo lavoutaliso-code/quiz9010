@@ -20,7 +20,9 @@ button.claro{background:#fff;color:#242424;border:1px solid #DCDCDA}
 .erro{color:#C0392B;font-size:13px;margin-top:8px}
 .cartoes{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:9px;margin:16px 0}
 .c{background:#fff;border-radius:13px;padding:13px}
-.c b{display:block;font-size:26px;font-weight:800;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+.c b{display:block;font-size:26px;font-weight:800;letter-spacing:-1px;font-variant-numeric:tabular-nums;
+  white-space:nowrap}
+.c b.peq{font-size:20px}
 .c span{font-size:11px;color:#8A8A86;text-transform:uppercase;letter-spacing:.5px}
 .c i{display:block;font-size:11px;color:#8A8A86;font-style:normal;margin-top:2px}
 .tab{background:#fff;border-radius:14px;overflow:auto;max-height:62vh}
@@ -120,7 +122,7 @@ function pinta() {
                 'de ' + comF.length + ' que calcularam']);
 
   $('cartoes').innerHTML = cartoes.map(([r, v, i]) =>
-    `<div class="c"><b>${typeof v === 'number' ? fmt(v) : v}</b><span>${r}</span><i>${i}</i></div>`).join('');
+    `<div class="c"><b class="${String(v).length > 7 ? 'peq' : ''}">${typeof v === 'number' ? fmt(v) : v}</b><span>${r}</span><i>${i}</i></div>`).join('');
 
   const pil = (v, t) => v ? `<span class="pil ok">${t}</span>` : '<span class="pil no">não</span>';
   $('t').innerHTML =
@@ -140,7 +142,7 @@ function pinta() {
       <td>${s.conhece_9010 === 'me_conta' ? '<span class="pil ok">me conta</span>'
             : s.conhece_9010 === 'ja_conheco' ? '<span class="pil meio">já conhece</span>' : ''}</td>
       <td>${pil(s.clicou_play, 'sim')}</td>
-      <td>${s.final ? '<span class="pil ok">' + s.final + '</span>' : '<span class="pil no">parou</span>'}</td>
+      <td>${s.final ? '<span class="pil ok">' + ({assistiu:'assistiu',satisfeita:'satisfeita',deixa_pra_la:'deixa pra lá'}[s.final] || s.final) + '</span>' : '<span class="pil no">parou</span>'}</td>
       <td class="n">${s.segundos ?? ''}</td>
       <td>${(s.utm && (s.utm.utm_source || s.utm.src)) || (s.ref ? new URL(s.ref).hostname : 'direto')}
         ${s.utm && s.utm.fbclid ? ' <span class="pil ok">fb</span>' : ''}</td>
