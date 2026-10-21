@@ -147,6 +147,14 @@ const Rastro = {
   }
 };
 
+/* ───────── a trava, num lugar só ─────────
+   O CSS do .off já tira o ponteiro — mas isso é aparência. Quem vale é esta
+   guarda: botão travado não dispara handler nenhum, venha o clique de onde vier. */
+addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest('.btn.off');
+  if (b) { e.stopImmediatePropagation(); e.preventDefault(); }
+}, true);
+
 /* ───────── navegação ───────── */
 const ORDEM = ['t1','t2','t3','t4','t5','t6','t7','t8','t9','t10','t11'];
 const Nav = {

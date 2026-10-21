@@ -1,0 +1,7 @@
+{
+  "tool_name": "mcp__plugin_chrome-devtools-mcp_chrome-devtools__emulate",
+  "tool_input_preview": "{\"pageId\":24,\"device\":\"iPhone 15\"}",
+  "error": "Input validation error: Invalid arguments for tool emulate: Unrecognized key: \"device\"",
+  "timestamp": "2026-10-21T21:08:59.669Z",
+  "retry_count": 1
+}
