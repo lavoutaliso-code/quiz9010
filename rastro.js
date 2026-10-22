@@ -192,8 +192,10 @@
     try {
       if (navigator.webdriver === true) return 'webdriver';
       if (ROBO.test(navigator.userAgent || '')) return 'ua-de-robo';
-      /* headless antigo abre sem janela de verdade */
-      if (!window.outerWidth && !window.outerHeight) return 'sem-janela';
+      /* ⚠️ TIRADO: `!outerWidth && !outerHeight` pegava headless antigo, mas
+         navegador de dentro do Instagram também devolve 0 — e 50 das 62
+         sessões medidas vieram de lá. Filtro que come cliente real é pior
+         que robô que escapa. Headless moderno já cai no `webdriver`. */
       /* ⚠️ NÃO entra «sem idioma» nem «sem plugin» aqui, por tentação que seja:
          são sinais fracos, e um falso positivo aqui apaga uma cliente de
          verdade da contagem. Os três de cima pegam a causa medida. */

@@ -77,7 +77,9 @@ const Rastro = {
       if (navigator.webdriver === true) return 'webdriver';
       if (/bot|crawler|spider|headless|phantom|lighthouse|pagespeed|puppeteer|playwright/i
           .test(navigator.userAgent || '')) return 'ua-de-robo';
-      if (!outerWidth && !outerHeight) return 'sem-janela';
+      /* ⚠️ nada de `outerWidth === 0`: navegador de dentro do Instagram
+         devolve 0 e o filtro comeria a cliente dela. Ver o irmão em
+         rastro.js. */
       return '';
     } catch (e) { return ''; }
   },

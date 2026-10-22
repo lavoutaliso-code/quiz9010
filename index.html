@@ -707,7 +707,7 @@ window.PIXEL_ID = '1792354588742315';
     if (navigator.webdriver === true
       || /bot|crawler|spider|headless|phantom|lighthouse|pagespeed|puppeteer|playwright/i
          .test(navigator.userAgent || '')
-      || (!outerWidth && !outerHeight)) {
+) {
       console.log('[pixel] não disparado: navegador de máquina');
       return;
     }
