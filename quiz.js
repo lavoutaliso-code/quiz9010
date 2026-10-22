@@ -129,11 +129,8 @@ const Rastro = {
     }
   },
 
-  /* uma requisição por lote: PATCH de vários caminhos de uma vez */
-  async descarrega() {
-    if (this.enviando || !this.fila.length) return;
-    this.enviando = true;
-    const lote = this.fila.splice(0, this.fila.length);
+  /* monta o corpo do PATCH a partir de um lote */
+  corpoDoLote(lote) {
     const corpo = {};
     for (const ev of lote) {
       const dia = ev.quando.slice(0, 10);
@@ -144,6 +141,28 @@ const Rastro = {
     }
     for (const [campo, valor] of Object.entries(this.resumo))
       if (valor !== undefined) corpo[`sessao/${Q.sessao}/${campo}`] = valor;
+    return corpo;
+  },
+
+  /* ⚠️ A PÁGINA VAI SAIR AGORA. Não dá para esperar a fila: `clicou_play` e o
+     fim do quiz — os dois eventos que mais importam — morriam no caminho.
+     Aqui o lote inteiro vai de uma vez, com keepalive, furando a vez. */
+  async fecha() {
+    const lote = this.fila.splice(0, this.fila.length);
+    try {
+      await fetch(BASE + '.json', { method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(this.corpoDoLote(lote)), keepalive: true });
+      this.gravados = (this.gravados || 0) + lote.length;
+    } catch (e) {}
+  },
+
+  /* uma requisição por lote: PATCH de vários caminhos de uma vez */
+  async descarrega() {
+    if (this.enviando || !this.fila.length) return;
+    this.enviando = true;
+    const lote = this.fila.splice(0, this.fila.length);
+    const corpo = this.corpoDoLote(lote);
     try {
       const r = await fetch(BASE + '.json', {
         method: 'PATCH',
@@ -557,9 +576,10 @@ document.getElementById('b-t9').addEventListener('click', () => {
   const p = new URLSearchParams(Rastro.utm());
   p.set('s', Q.sessao);
   p.set('fat', String(faturamento()));
-  const ir = () => location.href = '../vsl/?' + p.toString();
-  Rastro.descarrega();
-  setTimeout(ir, 260);
+  let foi = false;
+  const ir = () => { if (!foi) { foi = true; location.href = '../vsl/?' + p.toString(); } };
+  Rastro.fecha().then(ir);
+  setTimeout(ir, 1800);   // se a rede falhar, a pessoa vai para a aula do mesmo jeito
 });
 
 /* ═════════ TELA 10 · vídeo ═════════ */
