@@ -577,7 +577,8 @@ document.getElementById('b-t9').addEventListener('click', () => {
   p.set('s', Q.sessao);
   p.set('fat', String(faturamento()));
   let foi = false;
-  const ir = () => { if (!foi) { foi = true; location.href = 'vsl/?' + p.toString();   // relativo À PASTA do quiz, nunca '../' } };
+  // 'vsl/' é relativo À PASTA do quiz. Com '../vsl/' ele saía da pasta e dava 404.
+  const ir = () => { if (!foi) { foi = true; location.href = 'vsl/?' + p.toString(); } };
   Rastro.fecha().then(ir);
   setTimeout(ir, 1800);   // se a rede falhar, a pessoa vai para a aula do mesmo jeito
 });
