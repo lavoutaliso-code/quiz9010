@@ -57,7 +57,38 @@ const Rastro = {
     return o;
   },
 
+  /* ⭐⭐ MÁQUINA NÃO ENTRA NA SEMENTE — 22/10/2026, medido no próprio banco.
+   *
+   * Das 63 sessões gravadas aqui, **10 eram `HeadlessChrome`**: prints meus do
+   * loop de verificação visual. Elas não só inflavam a contagem — cada uma
+   * disparava `ViewContent` no Pixel, e é desse Pixel que sai o PÚBLICO
+   * SEMELHANTE. Semente com robô dentro é verba gasta pra achar gente que não
+   * existe, e isso é pior do que não medir.
+   *
+   * ⚠️ `navigator.webdriver` é `true` em todo navegador dirigido por programa
+   *    (Playwright, Puppeteer, Selenium) e falso em navegador de pessoa.
+   * ⚠️ Irmão do filtro do `rastro.js` desta mesma pasta. Os dois medem coisas
+   *    diferentes e os dois tinham o mesmo buraco. Mexer num sem mexer no
+   *    outro deixa as duas contagens divergindo de novo.
+   * ⚠️ O quiz continua FUNCIONANDO num navegador de teste — só não grava e não
+   *    dispara. Se filtrasse a navegação, não daria pra testar a tela. */
+  ehMaquina() {
+    try {
+      if (navigator.webdriver === true) return 'webdriver';
+      if (/bot|crawler|spider|headless|phantom|lighthouse|pagespeed|puppeteer|playwright/i
+          .test(navigator.userAgent || '')) return 'ua-de-robo';
+      if (!outerWidth && !outerHeight) return 'sem-janela';
+      return '';
+    } catch (e) { return ''; }
+  },
+
   marca(evento, dados) {
+    if (this.maquina === undefined) this.maquina = this.ehMaquina();
+    if (this.maquina) {
+      /* dito no console pra o teste poder conferir que foi ignorado */
+      try { console.log('[quiz] não gravado (' + this.maquina + '): ' + evento); } catch (e) {}
+      return;
+    }
     const corpo = {
       sessao: Q.sessao,
       evento,

@@ -1,0 +1,7 @@
+{
+  "tool_name": "mcp__claude-in-chrome__computer",
+  "tool_input_preview": "{\"action\":\"left_click\",\"coordinate\":[770,674],\"tabId\":1218539572}",
+  "error": "left_click: Coordinate (770, 674) is outside the coordinate frame (1180x657). Coordinates are pixels in the full-resolution frame, never in a scaled image's own pixels — if the page or window changed, take a new screenshot first.",
+  "timestamp": "2026-10-22T17:35:55.182Z",
+  "retry_count": 1
+}

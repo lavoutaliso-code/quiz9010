@@ -1,0 +1,7 @@
+{
+  "tool_name": "mcp__plugin_chrome-devtools-mcp_chrome-devtools__new_page",
+  "tool_input_preview": "{\"url\":\"http://localhost:8771/index.html\"}",
+  "error": "The browser is already running for /Users/lavoutaliso/.cache/chrome-devtools-mcp/chrome-profile. Use --isolated to run multiple browser instances.\nCause: The browser is already running for /Users/lavoutaliso/.cache/chrome-devtools-mcp/chrome-profile. Use a different `userDataDir` or stop the running browser first.",
+  "timestamp": "2026-10-22T19:47:57.923Z",
+  "retry_count": 1
+}

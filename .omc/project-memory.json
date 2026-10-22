@@ -48,6 +48,43 @@
       ]
     }
   },
-  "hotPaths": [],
+  "hotPaths": [
+    {
+      "path": "index.html",
+      "accessCount": 4,
+      "lastAccessed": 1792698611364,
+      "type": "file"
+    },
+    {
+      "path": "capa.png",
+      "accessCount": 3,
+      "lastAccessed": 1792668370905,
+      "type": "file"
+    },
+    {
+      "path": "capas/progressiva.jpg",
+      "accessCount": 2,
+      "lastAccessed": 1792690005550,
+      "type": "file"
+    },
+    {
+      "path": "rastro.js",
+      "accessCount": 2,
+      "lastAccessed": 1792698441532,
+      "type": "file"
+    },
+    {
+      "path": "capa-og.html",
+      "accessCount": 1,
+      "lastAccessed": 1792668329555,
+      "type": "file"
+    },
+    {
+      "path": "vsl/index.html",
+      "accessCount": 1,
+      "lastAccessed": 1792698462696,
+      "type": "file"
+    }
+  ],
   "userDirectives": []
 }

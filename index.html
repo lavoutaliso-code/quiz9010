@@ -39,8 +39,19 @@
      da Lalá, carimba o href sozinho — link escrito à mão é onde a medição
      morre. Ligado em 21/10/2026 junto com a palavra-chave «quiz».
      ⚠️ Independe do rastro próprio do quiz (Firebase) e do Pixel: são três
-        medições diferentes e cada uma responde a uma pergunta diferente. -->
-<script src="https://lala-landing.netlify.app/rastro.js" data-funil="quiz" defer></script>
+        medições diferentes e cada uma responde a uma pergunta diferente.
+
+     🔴🔴 22/10 — O ARQUIVO PASSOU A SER O DAQUI, e não o da lala-landing.
+        Motivo medido: o painel dizia «218 abriram o quiz» e o Firebase tinha
+        62 sessões. ~150 eram o loop de prints da noite da VSL — navegador
+        dirigido por programa, que o rastro contava como pessoa. A cópia daqui
+        tem o filtro de máquina (`navigator.webdriver`); a da lala-landing não
+        tem, porque o deploy de produção daquele site está barrado por crédito
+        na Netlify. Quando o deploy voltar, levar o filtro pra lá e, se quiser,
+        voltar a apontar pro arquivo central.
+        ⚠️ Enquanto houver duas cópias, mexer numa SEM mexer na outra faz as
+           duas medirem diferente e ninguém percebe. -->
+<script src="rastro.js?v=22out-filtro-maquina" data-funil="quiz" defer></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -686,6 +697,21 @@ mark.forte{background:#FFE878;padding:1px 3px;border-radius:3px;font-weight:700}
 window.PIXEL_ID = '1792354588742315';
 (function () {
   if (!window.PIXEL_ID || window.PIXEL_ID === '0') return;
+  /* 🔴 22/10 — O PIXEL NÃO SOBE PARA MÁQUINA, e isto não é detalhe: é deste
+     pixel que sai o PÚBLICO SEMELHANTE. Medido no Firebase: 10 das 63 sessões
+     eram `HeadlessChrome` (prints do loop de verificação), e cada uma mandou
+     um `PageView` + um `ViewContent` pra Meta. Semente com robô dentro faz a
+     Meta ir procurar gente parecida com um robô — verba gasta atrás de
+     ninguém. Mesmo filtro do `rastro.js` e do `quiz.js` desta pasta. */
+  try {
+    if (navigator.webdriver === true
+      || /bot|crawler|spider|headless|phantom|lighthouse|pagespeed|puppeteer|playwright/i
+         .test(navigator.userAgent || '')
+      || (!outerWidth && !outerHeight)) {
+      console.log('[pixel] não disparado: navegador de máquina');
+      return;
+    }
+  } catch (e) { /* se nem isso dá, segue: pixel é melhor que nada */ }
   !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
   n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
   n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
@@ -695,6 +721,6 @@ window.PIXEL_ID = '1792354588742315';
   fbq('track', 'PageView');
 })();
 </script>
-<script src="quiz.js"></script>
+<script src="quiz.js?v=22out-filtro-maquina"></script>
 </body>
 </html>
