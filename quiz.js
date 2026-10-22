@@ -186,6 +186,7 @@ const Nav = {
     this.atual = id;
     el.scrollTop = 0;
     Rastro.marca('entrou_tela', { de, para: id });
+    if (window.__ajustaTelas) window.__ajustaTelas();
     if (Cenas[id]) Cenas[id]();
   },
   volta() {
@@ -547,7 +548,18 @@ document.getElementById('b-t9').addEventListener('click', () => {
     faturamento: faturamento(), dobro: dobro(),
     servico: Q.servico && Q.servico.id, caminho: Q.caminho, conhece90: Q.conhece90
   });
-  Nav.vai('t10');
+  Rastro.marca('quiz_fim', {
+    final: 'foi_para_a_aula', faturamento: faturamento(), dobro: dobro(),
+    servico: Q.servico && Q.servico.id
+  });
+  /* a aula existe de verdade: a pessoa sai do quiz e vai para ela, levando o
+     rastro junto (a sessão e a origem) para o funil não se perder no caminho. */
+  const p = new URLSearchParams(Rastro.utm());
+  p.set('s', Q.sessao);
+  p.set('fat', String(faturamento()));
+  const ir = () => location.href = '../vsl/?' + p.toString();
+  Rastro.descarrega();
+  setTimeout(ir, 260);
 });
 
 /* ═════════ TELA 10 · vídeo ═════════ */
@@ -596,3 +608,61 @@ window.__faturamento = faturamento;
 window.__dobro = dobro;
 window.__Nav = Nav;
 window.__Rastro = Rastro;
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CADA TELA SE AJUSTA À ALTURA DO APARELHO
+   As telas foram desenhadas para 844px. Em celular real sobra bem menos
+   (barra de endereço, iPhone SE, tela dividida) e o Continuar saía da tela.
+   Aqui o conteúdo de cada tela vai para dentro de um «palco» com a altura
+   de projeto, e o palco encolhe proporcionalmente até caber. Nada é cortado,
+   nada rola, e o botão fica sempre alcançável.
+   ═══════════════════════════════════════════════════════════════════════════ */
+(function encaixaNaTela() {
+  const ALVO = 804;            // altura útil para a qual as telas foram feitas
+  const telas = [...document.querySelectorAll('.tela')];
+
+  telas.forEach(t => {
+    const palco = document.createElement('div');
+    palco.className = 'palco';
+    while (t.firstChild) palco.appendChild(t.firstChild);
+    t.appendChild(palco);
+  });
+
+  /* ⚠️ o palco fica NO FLUXO e sem position. Se fosse `position:absolute`, ele
+     viraria a referência dos elementos posicionados de dentro (o termômetro e a
+     rosca) e eles subiam POR CIMA do Continuar — o botão parava de clicar.
+     A rolagem é evitada por outro caminho: margem negativa que devolve ao fluxo
+     a altura que a escala tirou. */
+  const css = document.createElement('style');
+  css.textContent = `.palco{flex:0 0 auto;display:flex;flex-direction:column;
+    align-items:center;width:100%;height:${ALVO}px;transform-origin:top center;
+    will-change:transform}`;
+  document.head.appendChild(css);
+
+  function ajusta() {
+    /* ⚠️ a altura vem da JANELA, nunca do elemento: tela escondida mede 0 e a
+       escala sairia NEGATIVA — a tela aparecia de cabeça para baixo. */
+    const janela = (window.visualViewport ? visualViewport.height : innerHeight) || 844;
+    telas.forEach(t => {
+      const cs = getComputedStyle(t);
+      const disp = janela - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+      const k = Math.max(.45, Math.min(1, disp / ALVO));   // nunca invertido, nunca microscópico
+      const p = t.querySelector('.palco');
+      if (k < 1) {
+        p.style.width = (100 / k) + '%';
+        p.style.transform = 'scale(' + k + ')';
+        p.style.marginBottom = (-(ALVO * (1 - k))) + 'px';   // tira do fluxo o que a escala encolheu
+      } else {
+        p.style.width = '100%';
+        p.style.transform = 'none';
+        p.style.marginBottom = '0px';
+      }
+    });
+  }
+
+  ajusta();
+  addEventListener('resize', ajusta);
+  addEventListener('orientationchange', () => setTimeout(ajusta, 220));
+  if (window.visualViewport) visualViewport.addEventListener('resize', ajusta);
+  window.__ajustaTelas = ajusta;
+})();

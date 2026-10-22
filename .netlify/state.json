@@ -1,0 +1,20 @@
+{
+	"geolocation": {
+		"data": {
+			"city": "Belo Horizonte",
+			"country": {
+				"code": "BR",
+				"name": "Brazil"
+			},
+			"subdivision": {
+				"code": "MG",
+				"name": "Minas Gerais"
+			},
+			"timezone": "America/Sao_Paulo",
+			"latitude": -19.9029,
+			"longitude": -43.9572,
+			"postalCode": "30000"
+		},
+		"timestamp": 1792640769927
+	}
+}

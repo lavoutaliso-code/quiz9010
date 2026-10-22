@@ -1,0 +1,53 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1792630557543,
+  "projectRoot": "/Users/lavoutaliso/Desktop/quiz9010",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "netlify": {
+      "path": "netlify",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1792630557468,
+      "keyFiles": []
+    },
+    "vsl": {
+      "path": "vsl",
+      "purpose": null,
+      "fileCount": 3,
+      "lastAccessed": 1792630557471,
+      "keyFiles": [
+        "aula-9010.mp4",
+        "index.html",
+        "poster.jpg"
+      ]
+    }
+  },
+  "hotPaths": [],
+  "userDirectives": []
+}
