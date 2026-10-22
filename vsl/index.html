@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<meta name="theme-color" content="#EFE7DE">
+<title>Aprenda agora a estratégia 90/10</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--papel:#EFE7DE;--tinta:#0E0E12;--rosa:#F63D78;--marca:#FFD3E3;
+  --cinza:#6E6E78;--verde:#1FA463}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+body{font-family:Inter,-apple-system,system-ui,sans-serif;background:var(--papel);color:var(--tinta)}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;
+  padding:calc(env(safe-area-inset-top) + 14px) 18px calc(env(safe-area-inset-bottom) + 12px);
+  max-width:440px;margin:0 auto}
+
+.olho{display:flex;align-items:center;justify-content:center;gap:7px;font-size:10.5px;
+  font-weight:800;letter-spacing:.17em;text-transform:uppercase;color:var(--rosa);flex:0 0 auto}
+.olho s{text-decoration:none;width:6px;height:6px;border-radius:50%;background:var(--rosa);
+  animation:pisca 1.1s infinite}
+
+h1{font-size:24px;font-weight:800;letter-spacing:-.9px;line-height:1.1;text-align:center;
+  flex:0 0 auto;margin-top:9px}
+/* ⚠️ o 90/10 mora numa linha SÓ dele: o círculo nunca encosta em palavra nenhuma */
+.selo{flex:0 0 auto;margin:24px 0 22px;position:relative;display:block}
+.selo .n{font-size:33px;font-weight:900;letter-spacing:-1.4px;line-height:1;display:block;
+  padding:4px 20px}
+.selo svg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:168px;height:74px;overflow:visible;pointer-events:none}
+.selo svg path{fill:none;stroke:var(--rosa);stroke-width:4;stroke-linecap:round;opacity:.92}
+.lead{font-size:13px;color:var(--cinza);line-height:1.4;text-align:center;flex:0 0 auto;
+  max-width:310px}
+
+/* ───── o vídeo dentro de um cartão ───── */
+.cartao{flex:0 0 auto;width:100%;background:#fff;border-radius:18px;padding:8px 8px 10px;
+  margin-top:6px;box-shadow:0 10px 26px -18px rgba(40,25,20,.5)}
+.cartao .fita{display:flex;align-items:center;gap:6px;padding:2px 4px 7px;font-size:10px;
+  font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--cinza)}
+.cartao .fita u{text-decoration:none;flex:1;height:1px;background:#E6DED4}
+.player{position:relative;background:#0B0B0E;border-radius:12px;overflow:hidden}
+.player video{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#000}
+.capa{position:absolute;inset:0;display:grid;place-items:center;cursor:pointer;
+  background:rgba(0,0,0,.16);transition:opacity .3s}
+.capa.off{opacity:0;pointer-events:none}
+.bolaplay{width:62px;height:62px;border-radius:50%;background:var(--rosa);display:grid;
+  place-items:center;box-shadow:0 0 38px rgba(246,61,120,.55);position:relative}
+.bolaplay:after{content:'';position:absolute;inset:-11px;border-radius:50%;
+  border:2px solid rgba(246,61,120,.42);animation:eco 2.3s ease-out infinite}
+.ctrl{display:flex;align-items:center;gap:9px;padding:8px 9px 8px;background:#0B0B0E}
+.ctrl button{background:0;border:0;padding:0;display:grid;place-items:center;cursor:pointer;
+  width:20px;height:20px;flex:0 0 20px}
+.ctrl .t{font:600 10px/1 'JetBrains Mono',monospace;color:#B9B9C2;flex:0 0 auto;
+  font-variant-numeric:tabular-nums}
+.ctrl .tl{flex:1;height:14px;display:flex;align-items:center;cursor:pointer;position:relative}
+.ctrl .tl .trilho{position:absolute;left:0;right:0;height:3px;border-radius:3px;
+  background:rgba(255,255,255,.24)}
+.ctrl .tl .feito{position:absolute;left:0;height:3px;border-radius:3px;background:var(--rosa);width:0}
+.ctrl .tl .bola{position:absolute;width:10px;height:10px;border-radius:50%;background:#fff;
+  left:0;margin-left:-5px;box-shadow:0 1px 3px rgba(0,0,0,.5)}
+
+/* ───── a ponte: o recado e a seta até o Instagram ───── */
+.ponte{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:11px;
+  margin:9px 0 7px}
+.ponte .mao{font-size:17px;font-weight:800;letter-spacing:-.4px;color:var(--tinta);
+  line-height:1.34;text-align:right;max-width:224px}
+.ponte .mao b{font-weight:800;box-decoration-break:clone;-webkit-box-decoration-break:clone;
+  background:linear-gradient(transparent 52%,var(--marca) 52%);padding:0 4px}
+.ponte svg{width:40px;height:50px;flex:0 0 40px}
+.ponte svg path{fill:none;stroke:var(--rosa);stroke-width:3.4;stroke-linecap:round;
+  stroke-linejoin:round}
+
+/* ───── o Instagram ───── */
+.ig{flex:0 0 auto;width:100%;background:#fff;border-radius:14px;overflow:hidden;
+  border:1px solid #E6DED4;box-shadow:0 10px 24px -18px rgba(40,25,20,.5)}
+.ig .top{display:flex;align-items:center;gap:8px;padding:8px 11px;border-bottom:1px solid #F0F0F0}
+.ig .top .vo{font-size:15px;line-height:1}
+.ig .top .nick{font-size:13px;font-weight:700;display:flex;align-items:center;gap:4px}
+.ig .top .nick u{text-decoration:none;width:12px;height:12px;border-radius:50%;background:#3797F0;
+  display:grid;place-items:center;color:#fff;font-size:7.5px;font-weight:900}
+.ig .top .pts{margin-left:auto;letter-spacing:1.6px;font-size:13px}
+.ig .head{display:flex;align-items:center;gap:14px;padding:10px 12px 0}
+.ig .av{width:58px;height:58px;border-radius:50%;flex:0 0 58px;display:grid;place-items:center;
+  background:conic-gradient(from 150deg,#FEDA75,#FA7E1E,#D62976,#962FBF,#4F5BD5,#FEDA75)}
+.ig .av u{text-decoration:none;width:52px;height:52px;border-radius:50%;border:2.5px solid #fff;
+  background-size:cover;background-position:center;display:block}
+.ig .nums{flex:1;display:flex;justify-content:space-around;text-align:center}
+.ig .nums div b{display:block;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;
+  letter-spacing:-.4px}
+.ig .nums div span{font-size:11px;color:#262626}
+.ig .bio{padding:8px 12px 0;font-size:12px;line-height:1.35}
+.ig .bio b{font-weight:700;display:block}
+.ig .bio i{font-style:normal;color:#8E8E8E;display:block;font-size:11.5px}
+.ig .acoes{display:flex;gap:5px;padding:9px 12px 11px}
+.ig .acoes button{flex:1;border:0;border-radius:8px;padding:6px 0;font:700 12px Inter;
+  background:#3797F0;color:#fff}
+.ig .acoes button.cinza{background:#EFEFEF;color:#111}
+
+.vaga{flex:1 1 auto;min-height:0}
+.cta{flex:0 0 auto;width:100%;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-decoration:none;background:var(--verde);color:#fff;font-weight:800;
+  border-radius:14px;text-align:center;line-height:1.14;letter-spacing:-.2px;padding:13px 14px;
+  font-size:15px;box-shadow:0 12px 26px -14px rgba(31,164,99,.95);
+  opacity:0;transform:translateY(10px) scale(.97);visibility:hidden;
+  transition:opacity .6s,transform .6s cubic-bezier(.2,.9,.3,1),visibility .6s}
+.cta.on{opacity:1;transform:none;visibility:visible}
+.cta i{font-style:normal;font-weight:500;font-size:11px;opacity:.92;margin-top:3px}
+.cta.pisca{animation:chama 1.05s ease-in-out infinite}
+@keyframes chama{
+  0%,100%{box-shadow:0 12px 26px -14px rgba(31,164,99,.95),0 0 0 0 rgba(31,164,99,.55);transform:scale(1)}
+  50%{box-shadow:0 12px 26px -14px rgba(31,164,99,.95),0 0 0 12px rgba(31,164,99,0);transform:scale(1.022)}}
+.rod{flex:0 0 auto;text-align:center;font-size:10px;color:var(--cinza);margin-top:7px}
+@keyframes pisca{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes eco{0%{transform:scale(.88);opacity:.9}100%{transform:scale(1.32);opacity:0}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="olho"><s></s>aula gratuita · 1 exibição</div>
+  <h1>Aprenda agora a estratégia</h1>
+  <div class="selo">
+    <span class="n">90/10</span>
+    <svg viewBox="0 0 168 74"><path id="circ" d="M140,13 C110,1 52,-1 24,13 C-2,26 1,56 28,66 C60,78 128,76 150,61 C168,49 162,22 136,14"/></svg>
+  </div>
+  <div class="lead">Ela separa o salão que vive lotado do salão que vive esperando.</div>
+
+  <div class="cartao">
+    <div class="fita">a aula<u></u>3 min</div>
+    <div class="player">
+      <video id="v" playsinline preload="metadata" poster="poster.jpg">
+        <source src="aula-9010.mp4" type="video/mp4">
+      </video>
+      <div class="capa" id="capa">
+        <div class="bolaplay"><svg width="21" height="25" viewBox="0 0 22 26"><path d="M1 1l20 12L1 25z" fill="#fff"/></svg></div>
+      </div>
+      <div class="ctrl">
+        <button id="bPlay" aria-label="dar play">
+          <svg id="icPlay" width="12" height="14" viewBox="0 0 22 26"><path d="M1 1l20 12L1 25z" fill="#fff"/></svg>
+          <svg id="icPause" width="12" height="14" viewBox="0 0 22 26" style="display:none"><path d="M2 1h6v24H2zM14 1h6v24h-6z" fill="#fff"/></svg>
+        </button>
+        <span class="t" id="agora">0:00</span>
+        <span class="tl" id="tl"><span class="trilho"></span><span class="feito" id="feito"></span><span class="bola" id="bola"></span></span>
+        <span class="t" id="total">3:00</span>
+        <button id="bSom" aria-label="som">
+          <svg id="icSom" width="15" height="15" viewBox="0 0 24 24" fill="#fff"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.8a4 4 0 0 1 0 6.4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+          <svg id="icMudo" width="15" height="15" viewBox="0 0 24 24" fill="#fff" style="display:none"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9l5 6M21 9l-5 6" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+        <button id="bTela" aria-label="tela cheia">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ponte">
+    <div class="mao"><b>e foi isso que aconteceu<br>no nosso salão</b></div>
+    <svg viewBox="0 0 40 50"><path id="seta" d="M9,4 C26,10 14,24 23,38 M13,29 L24,42 L33,27"/></svg>
+  </div>
+
+  <div class="ig">
+    <div class="top"><span class="vo">&lsaquo;</span>
+      <span class="nick">lavoutaliso <u>&#10003;</u></span><span class="pts">&#8943;</span></div>
+    <div class="head">
+      <div class="av"><u id="avatar" style="background-image:url(data:image/jpeg;base64,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)"></u></div>
+      <div class="nums">
+        <div><b>527</b><span>posts</span></div>
+        <div><b id="seg">0</b><span>seguidores</span></div>
+        <div><b>3</b><span>seguindo</span></div>
+      </div>
+    </div>
+    <div class="bio"><b>LAVOU TÁ LISO ®</b><i>Saúde/beleza · 📍BH</i></div>
+    <div class="acoes"><button>Seguir</button><button class="cinza">Mensagem</button>
+      <button class="cinza" style="flex:0 0 34px">⌄</button></div>
+  </div>
+
+  <div class="vaga"></div>
+  <a class="cta" id="cta" href="https://form.respondi.app/nOjMfbS3" target="_blank" rel="noopener">
+    Falar agora com o gestor de tráfego<i>o mesmo que faz o tráfego do Lavou Tá Liso</i></a>
+  <div class="rod">Lavou Tá Liso · Izabela Laila</div>
+</div>
+
+<script>
+const QUANDO_CTA = 60;   // o botão verde nasce ao primeiro minuto de vídeo
+const v = document.getElementById('v'), capa = document.getElementById('capa');
+const feito = document.getElementById('feito'), bola = document.getElementById('bola');
+const tl = document.getElementById('tl'), cta = document.getElementById('cta');
+
+const mmss = s => { if (!isFinite(s)) return '0:00'; s = Math.max(0, Math.floor(s));
+  return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+
+function alterna() { v.paused ? v.play() : v.pause(); }
+capa.addEventListener('click', alterna);
+document.getElementById('bPlay').addEventListener('click', alterna);
+v.addEventListener('click', alterna);
+v.addEventListener('play', () => { capa.classList.add('off');
+  icPlay.style.display = 'none'; icPause.style.display = ''; });
+v.addEventListener('pause', () => { icPlay.style.display = ''; icPause.style.display = 'none';
+  if (v.currentTime < .2) capa.classList.remove('off'); });
+v.addEventListener('loadedmetadata', () => {
+  document.getElementById('total').textContent = mmss(v.duration); });
+
+let ctaAberto = false;
+v.addEventListener('timeupdate', () => {
+  const p = v.duration ? v.currentTime / v.duration : 0;
+  feito.style.width = (p * 100) + '%'; bola.style.left = (p * 100) + '%';
+  document.getElementById('agora').textContent = mmss(v.currentTime);
+  if (!ctaAberto && v.currentTime >= QUANDO_CTA) { ctaAberto = true; cta.classList.add('on'); }
+});
+v.addEventListener('ended', () => { cta.classList.add('on', 'pisca'); capa.classList.remove('off'); });
+
+function buscaNoPonto(ev) { const r = tl.getBoundingClientRect();
+  const x = (ev.touches ? ev.touches[0].clientX : ev.clientX) - r.left;
+  if (v.duration) v.currentTime = Math.min(v.duration, Math.max(0, x / r.width * v.duration)); }
+let arrastando = false;
+tl.addEventListener('pointerdown', e => { arrastando = true; tl.setPointerCapture(e.pointerId); buscaNoPonto(e); });
+tl.addEventListener('pointermove', e => { if (arrastando) buscaNoPonto(e); });
+tl.addEventListener('pointerup',   () => { arrastando = false; });
+
+document.getElementById('bSom').addEventListener('click', () => { v.muted = !v.muted;
+  icSom.style.display = v.muted ? 'none' : ''; icMudo.style.display = v.muted ? '' : 'none'; });
+document.getElementById('bTela').addEventListener('click', () => {
+  if (document.fullscreenElement) document.exitFullscreen();
+  else if (v.webkitEnterFullscreen) v.webkitEnterFullscreen();
+  else v.closest('.player').requestFullscreen && v.closest('.player').requestFullscreen(); });
+addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); alterna(); } });
+
+/* ══ o Instagram está na tela desde o começo; o número sobe sozinho e repete ══ */
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+function sobeSeguidores() {
+  const el = document.getElementById('seg'), ALVO = 50500, DUR = 6200, t0 = performance.now();
+  const passo = agora => { const t = Math.min(1, (agora - t0) / DUR), n = ALVO * easeOut(t);
+    el.textContent = n >= 1000 ? (n / 1000).toFixed(1).replace('.', ',') + ' mil'
+                               : Math.round(n).toLocaleString('pt-BR');
+    if (t < 1) requestAnimationFrame(passo); else el.textContent = '50,5 mil'; };
+  requestAnimationFrame(passo);
+}
+sobeSeguidores();   // uma vez só, ao entrar
+
+/* o circulado e a seta se desenhando */
+[['circ', 1.1, .45], ['seta', .8, 1.3]].forEach(([id, dur, atraso]) => {
+  const p = document.getElementById(id); if (!p) return;
+  const c = p.getTotalLength();
+  p.style.strokeDasharray = c; p.style.strokeDashoffset = c; p.getBoundingClientRect();
+  p.style.transition = `stroke-dashoffset ${dur}s cubic-bezier(.4,.1,.2,1) ${atraso}s`;
+  p.style.strokeDashoffset = 0;
+});
+
+window.__vsl = { v, sobeSeguidores, QUANDO_CTA };
+</script>
+</body>
+</html>
