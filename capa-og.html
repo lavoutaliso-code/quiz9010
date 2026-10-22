@@ -1,0 +1,36 @@
+<!doctype html><html lang="pt-BR"><meta charset="utf-8">
+<!-- A capa que o link do quiz mostra quando é mandado no direct, no WhatsApp
+     ou em qualquer lugar. 1200×630 é o tamanho que a Meta pede.
+     ⚠️ As cores NÃO foram escolhidas a olho: saíram amostradas do próprio quiz
+     (fundo #F4F5F7, azul #4C66DC, título #252528, apoio #71777E). -->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{width:1200px;height:630px;background:#F4F5F7;
+       font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+       display:flex;align-items:center;gap:64px;padding:0 90px;overflow:hidden}
+
+  /* o mesmo quadrado azul do quiz, com o brilho no canto superior esquerdo */
+  .ico{width:260px;height:260px;border-radius:66px;flex:none;position:relative;
+       background:
+         radial-gradient(120% 120% at 26% 20%, #93A6FF 0%, #5A72E8 46%, #4C66DC 72%, #3F55C4 100%);
+       box-shadow:0 36px 80px rgba(76,102,220,.34), 0 0 0 26px rgba(76,102,220,.07)}
+  .ico span{position:absolute;inset:0;display:grid;place-items:center;
+            font-size:150px;font-weight:800;color:#fff;line-height:1;padding-bottom:12px}
+
+  .txt{min-width:0}
+  .tag{font-size:21px;font-weight:600;letter-spacing:.22em;color:#8E95A0;
+       text-transform:uppercase;margin-bottom:22px}
+  h1{font-size:78px;line-height:1.04;font-weight:800;color:#252528;letter-spacing:-.025em}
+  p{margin-top:24px;font-size:30px;line-height:1.34;color:#71777E;max-width:17ch}
+  .sel{margin-top:34px;display:inline-block;background:#141719;color:#fff;
+       font-size:25px;font-weight:600;padding:17px 38px;border-radius:999px}
+</style>
+<div class="ico"><span>?</span></div>
+<div class="txt">
+  <div class="tag">Quiz · 6 perguntas · 2 min</div>
+  <h1>Tráfego pago<br>é pra mim?</h1>
+  <p>Responda seis perguntas e veja o seu número.</p>
+  <div class="sel">Começar o quiz&nbsp; →</div>
+</div>
+</html>
