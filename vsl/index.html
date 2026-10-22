@@ -15,7 +15,7 @@
   -webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;overscroll-behavior:none}
 body{font-family:Inter,-apple-system,system-ui,sans-serif;background:var(--papel);color:var(--tinta)}
-#app{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;
+#app{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;overflow:hidden;
   padding:calc(env(safe-area-inset-top) + 14px) 18px calc(env(safe-area-inset-bottom) + 12px);
   max-width:440px;margin:0 auto}
 
@@ -37,21 +37,22 @@ h1{font-size:24px;font-weight:800;letter-spacing:-.9px;line-height:1.1;text-alig
   max-width:310px}
 
 /* ───── o vídeo dentro de um cartão ───── */
-.cartao{flex:0 0 auto;width:100%;background:#fff;border-radius:18px;padding:8px 8px 10px;
-  margin-top:6px;box-shadow:0 10px 26px -18px rgba(40,25,20,.5)}
+.cartao{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;width:100%;
+  background:#fff;border-radius:18px;padding:8px 8px 10px;margin-top:6px;box-shadow:0 10px 26px -18px rgba(40,25,20,.5)}
 .cartao .fita{display:flex;align-items:center;gap:6px;padding:2px 4px 7px;font-size:10px;
   font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--cinza)}
 .cartao .fita u{text-decoration:none;flex:1;height:1px;background:#E6DED4}
-.player{position:relative;background:#0B0B0E;border-radius:12px;overflow:hidden}
-.player video{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#000}
-.capa{position:absolute;inset:0;display:grid;place-items:center;cursor:pointer;
+.player{position:relative;flex:1 1 auto;min-height:120px;display:flex;flex-direction:column;
+  background:#0B0B0E;border-radius:12px;overflow:hidden}
+.player video{display:block;flex:1 1 auto;min-height:0;width:100%;object-fit:cover;background:#000}
+.capa{position:absolute;left:0;right:0;top:0;bottom:36px;display:grid;place-items:center;cursor:pointer;
   background:rgba(0,0,0,.16);transition:opacity .3s}
 .capa.off{opacity:0;pointer-events:none}
 .bolaplay{width:62px;height:62px;border-radius:50%;background:var(--rosa);display:grid;
   place-items:center;box-shadow:0 0 38px rgba(246,61,120,.55);position:relative}
 .bolaplay:after{content:'';position:absolute;inset:-11px;border-radius:50%;
   border:2px solid rgba(246,61,120,.42);animation:eco 2.3s ease-out infinite}
-.ctrl{display:flex;align-items:center;gap:9px;padding:8px 9px 8px;background:#0B0B0E}
+.ctrl{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:8px 9px 8px;background:#0B0B0E}
 .ctrl button{background:0;border:0;padding:0;display:grid;place-items:center;cursor:pointer;
   width:20px;height:20px;flex:0 0 20px}
 .ctrl .t{font:600 10px/1 'JetBrains Mono',monospace;color:#B9B9C2;flex:0 0 auto;
@@ -100,11 +101,10 @@ h1{font-size:24px;font-weight:800;letter-spacing:-.9px;line-height:1.1;text-alig
   background:#3797F0;color:#fff}
 .ig .acoes button.cinza{background:#EFEFEF;color:#111}
 
-.vaga{flex:1 1 auto;min-height:0}
 .cta{flex:0 0 auto;width:100%;display:flex;flex-direction:column;align-items:center;
   justify-content:center;text-decoration:none;background:var(--verde);color:#fff;font-weight:800;
   border-radius:14px;text-align:center;line-height:1.14;letter-spacing:-.2px;padding:13px 14px;
-  font-size:15px;box-shadow:0 12px 26px -14px rgba(31,164,99,.95);
+  font-size:15px;margin-top:11px;box-shadow:0 12px 26px -14px rgba(31,164,99,.95);
   opacity:0;transform:translateY(10px) scale(.97);visibility:hidden;
   transition:opacity .6s,transform .6s cubic-bezier(.2,.9,.3,1),visibility .6s}
 .cta.on{opacity:1;transform:none;visibility:visible}
@@ -114,6 +114,47 @@ h1{font-size:24px;font-weight:800;letter-spacing:-.9px;line-height:1.1;text-alig
   0%,100%{box-shadow:0 12px 26px -14px rgba(31,164,99,.95),0 0 0 0 rgba(31,164,99,.55);transform:scale(1)}
   50%{box-shadow:0 12px 26px -14px rgba(31,164,99,.95),0 0 0 12px rgba(31,164,99,0);transform:scale(1.022)}}
 .rod{flex:0 0 auto;text-align:center;font-size:10px;color:var(--cinza);margin-top:7px}
+/* ── telas mais curtas: tudo encolhe junto, nada se encavala ── */
+@media (max-height:800px){
+  h1{font-size:22px;margin-top:7px}
+  .selo{margin:20px 0 18px}
+  .selo .n{font-size:30px;padding:3px 18px}
+  .selo svg{width:154px;height:66px}
+  .lead{font-size:12.5px}
+  .cartao{margin-top:5px;padding:7px 7px 9px}
+  .ponte{margin:7px 0 5px}
+  .ponte .mao{font-size:16px}
+  .ig .av{width:52px;height:52px;flex:0 0 52px}
+  .ig .av u{width:47px;height:47px}
+  .cta{padding:12px 14px;font-size:14.5px;margin-top:9px}
+}
+@media (max-height:700px){
+  #app{padding-top:calc(env(safe-area-inset-top) + 9px);padding-bottom:calc(env(safe-area-inset-bottom) + 8px)}
+  .olho{font-size:9.5px}
+  h1{font-size:19px;margin-top:5px}
+  .selo{margin:15px 0 13px}
+  .selo .n{font-size:25px;padding:2px 15px}
+  .selo svg{width:130px;height:55px}
+  .lead{font-size:11.5px;max-width:280px}
+  .cartao{margin-top:4px;padding:6px 6px 7px;border-radius:14px}
+  .cartao .fita{font-size:9px;padding:1px 3px 5px}
+  .ctrl{padding:6px 7px}
+  .ponte{margin:5px 0 4px;gap:8px}
+  .ponte .mao{font-size:14px;max-width:196px}
+  .ponte svg{width:32px;height:40px;flex:0 0 32px}
+  .ig .top{padding:6px 10px}
+  .ig .head{padding:8px 11px 0}
+  .ig .av{width:46px;height:46px;flex:0 0 46px}
+  .ig .av u{width:41px;height:41px;border-width:2px}
+  .ig .nums div b{font-size:14px}
+  .ig .nums div span{font-size:10px}
+  .ig .bio{padding:6px 11px 0;font-size:11px}
+  .ig .acoes{padding:7px 11px 9px}
+  .ig .acoes button{padding:5px 0;font-size:11px}
+  .cta{padding:10px 12px;font-size:13.5px;border-radius:12px;margin-top:7px}
+  .cta i{font-size:10px}
+  .rod{font-size:9px;margin-top:5px}
+}
 @keyframes pisca{0%,100%{opacity:1}50%{opacity:.2}}
 @keyframes eco{0%{transform:scale(.88);opacity:.9}100%{transform:scale(1.32);opacity:0}}
 </style>
@@ -177,7 +218,6 @@ h1{font-size:24px;font-weight:800;letter-spacing:-.9px;line-height:1.1;text-alig
       <button class="cinza" style="flex:0 0 34px">⌄</button></div>
   </div>
 
-  <div class="vaga"></div>
   <a class="cta" id="cta" href="https://form.respondi.app/nOjMfbS3" target="_blank" rel="noopener">
     Falar agora com o gestor de tráfego<i>o mesmo que faz o tráfego do Lavou Tá Liso</i></a>
   <div class="rod">Lavou Tá Liso · Izabela Laila</div>
