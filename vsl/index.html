@@ -168,6 +168,34 @@ h1{font-size:24px;font-weight:800;letter-spacing:-.9px;line-height:1.1;text-alig
 @keyframes pisca{0%,100%{opacity:1}50%{opacity:.2}}
 @keyframes eco{0%{transform:scale(.88);opacity:.9}100%{transform:scale(1.32);opacity:0}}
 </style>
+<!-- ═══ PIXEL DA META — o que monta o público pra remarketing e semelhante ═══
+     Instalado 23/10/2026. Até aqui só o quiz tinha este código: o nosso rastro
+     (rastro.js) sabe DE ONDE a cliente veio, mas quem monta público de anúncio
+     é a Meta, e a Meta só enxerga quem carregou este trecho.
+     ⚠️ NÃO dispara para máquina: cada print do loop de verificação abre um
+     navegador limpo e mandaria um PageView. Semente com robô dentro faz a Meta
+     procurar gente parecida com robô. Mesmo filtro do rastro.js. -->
+<script>
+window.PIXEL_ID = '1792354588742315';
+(function () {
+  if (!window.PIXEL_ID || window.PIXEL_ID === '0') return;
+  try {
+    if (navigator.webdriver === true
+      || /bot|crawler|spider|headless|phantom|lighthouse|pagespeed|puppeteer|playwright/i
+         .test(navigator.userAgent || '')) {
+      console.log('[pixel] nao disparado: navegador de maquina');
+      return;
+    }
+  } catch (e) { /* se nem isso da, segue: pixel e melhor que nada */ }
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+  (window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', window.PIXEL_ID);
+  fbq('track', 'PageView');
+})();
+</script>
 </head>
 <body>
 <div id="app">
